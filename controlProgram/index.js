@@ -16,6 +16,20 @@ const HL = new thrusterControl({name:"HL", address: 0x33, invert: false}),
 
   */
 
+const express = require('express');
+
+const app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+app.use(express.static('public'));
+
+app.get('/', (req, res) => {
+	res.send('Hello Express app');
+});
+
+
+/* old server setup
 var io = require('socket.io').listen(5000);
 io.on('connection', function(socket) {
   // relay messages from clients
@@ -23,6 +37,13 @@ io.on('connection', function(socket) {
     io.emit(packet[0], packet[1]);
     return next();
   });
+
+  */
+
+
+http.listen(80, function(){
+  console.log('listening on *:80 ');
+});
 
   // loging socket communicaions
   /*
