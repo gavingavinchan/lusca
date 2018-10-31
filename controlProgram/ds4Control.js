@@ -1,10 +1,18 @@
+//var socket = io();
 var io = require('socket.io-client');
-var socket = io.connect('http://localhost:5000');
+var socket = io.connect('http://localhost:80');
 
+
+
+//THIS USES EDITED node-gamepad!!!
 var GamePad = require("node-gamepad");
-var controller = new GamePad("ps4/dualshock4");
+var controller = new GamePad("ps4/dualshock4_analog");
 
 controller.connect();
+
+socket.on('connect', ()=>{
+    socket.emit('thrusterControl.start', {});
+});
 
 var status = {
   gamepad: {
@@ -49,8 +57,6 @@ var status = {
 function normalize(x) {
   return (x - 255/2)/(255/2);
 }
-
-
 
 controller.on("left:move", function(value) {
   let gp = status.gamepad;

@@ -10,65 +10,49 @@ const HFL = new thrusterControl({name:"HFL", address: 0x32, invert: true}),
   VF = new thrusterControl({name:"VF", address: 0x3A, invert: false}),
   VR = new thrusterControl({name:"VR", address: 0x3B, invert: true});
 
-/*
-const HL = new thrusterControl({name:"HL", address: 0x33, invert: false}),
-  HR = new thrusterControl({name:"HR", address: 0x31, invert: false}),
-
-  */
-
 const express = require('express');
-
 const app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-
 app.use(express.static('public'));
-
 app.get('/', (req, res) => {
 	res.send('Hello Express app');
 });
 
 
-/* old server setup
-var io = require('socket.io').listen(5000);
 io.on('connection', function(socket) {
-  // relay messages from clients
-  socket.use((packet, next) => {
-    io.emit(packet[0], packet[1]);
-    return next();
-  });
-
-  */
-
-
-http.listen(80, function(){
-  console.log('listening on *:80 ');
-});
-
-  // loging socket communicaions
+  // log socket communications
   /*
   socket.use((packet, next) => {
     console.log(new Date() + '\t' + packet[0] + '\t' + packet[1]);
     return next();
   });
-  */
+*/
 
-  io.emit('thrusterControl.start', {});
+  // relay messages from clients
+  socket.use((packet, next) => {
+    io.emit(packet[0], packet[1]);
+    return next();
+  });
 });
 
-
-
+http.listen(80, function() {
+  console.log('listening on *:80 ');
+});
 
 var thrustProfile = require("./thrustProfile6T.js");
-
+/*
 var servoControl = require("./servoControl.js");
+servoControl.init(0x17);
 
 const EMControl = require("./EMControl.js");
 const EM1 = new EMControl({name: 'EM1', address: 0x14});
 const EM2 = new EMControl({name: 'EM2', address: 0x16});
 
 var DTMFencoder = require("./DTMFencoderControl.js");
+DTMFencoder.init(0x20);
 
+*/
 var ds4Control = require("./ds4Control.js");
 
 //TODO fix too many listener problem
@@ -79,9 +63,7 @@ var ms5803 = require('ms5803');
 var sensor = new ms5803();
 
 
-servoControl.init(0x17);
 
-DTMFencoder.init(0x20);
 //io.emit('DTMFpin', DTMFpin);
 
 
@@ -128,101 +110,6 @@ var status = {
 exports.getStatus = function() {
   return status;
 }
-/*
-function normalize(x) {
-  return (x - 255/2)/(255/2);
-}
-
-
-
-//joystick
-controller.on("left:move", function(value) {
-  let gp = status.gamepad;
-  gp.leftX = normalize(value.x);
-  gp.leftY = -normalize(value.y);
-
-  io.emit('gamepad.leftJoystick', {x: gp.leftX, y: gp.leftY});
-})
-
-controller.on("right:move", function(value) {
-  let gp = status.gamepad;
-
-  gp.rightX = normalize(value.x);
-  gp.rightY = -normalize(value.y);
-
-  io.emit('gamepad.rightJoystick', {x: gp.rightX, y: gp.rightY});
-})
-
-//change direction
-controller.on("circle:press", function() {
-  io.emit('gamepad.circle', {});
-})
-
-//change fine/coarse mode
-controller.on("x:press", function() {
-  io.emit('gamepad.x', {});
-})
-
-
-//Camera switching functionality
-controller.on("dpadUp:press", function() {
-  io.emit('gamepad.dpadUp', {});
-})
-
-controller.on("dpadLeft:press", function() {
-  io.emit('gamepad.dpadLeft', {});
-})
-
-//electromagnet 1
-controller.on("l1:press", function(){
-  io.emit('gamepad.l1', {});
-
-  if(status.manipulator.EM1) {
-    EM1.attract(0);
-    status.manipulator.EM1 = false;
-  } else {
-    EM1.attract(255);
-    status.manipulator.EM1 = true;
-  }
-})
-
-//electromagnet 2
-controller.on("r1:press", function(){
-  if(status.manipulator.EM2) {
-    EM2.attract(0);
-    status.manipulator.EM2 = false;
-  } else {
-    EM2.attract(255);
-    status.manipulator.EM2 = true;
-  }
-})
-
-
-//DTMFencoder
-controller.on("share:press", async function() {
-  try{                                          //try catch for printing errors
-    for(var i=0; i<DTMFpin.length; i++) {
-      DTMFencoder.tone(DTMFpin[i]);
-      status.manipulator.DTMFencoder = 1;
-      await delay(500);
-    }
-    status.manipulator.DTMFencoder = 0;
-  } catch(error) {
-    console.error(error);
-  }
-})
-
-
-//tare the depth reading
-controller.on("triangle:press", function(){
-  status.depth.tare = status.depth.raw;
-})
-
-//calibrate the depth reading, press this when sensor is at water surface
-controller.on("psx:press", function(){
-  status.depth.zero = status.depth.raw;
-})
-*/
 
 
 //delay

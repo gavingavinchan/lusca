@@ -1,5 +1,9 @@
+//var socket = io();
+
+
 var io = require('socket.io-client');
-var socket = io.connect('http://localhost:5000');
+var socket = io.connect('http://localhost:80');
+
 
 //console.log("starting");
 
@@ -67,7 +71,7 @@ socket.on('tilt', function(value) {
 });
 
 
-socket.on('thrusterControl.thrust.HRR', function(_thrust) {
+socket.on('thrusterTarget.HRR', function(_thrust) {
   status.profile.HRR = _thrust;
 });
 

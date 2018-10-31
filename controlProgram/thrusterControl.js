@@ -16,7 +16,7 @@ module.exports = function(setting){
 
   // INIT Thruster
   thruster.setting = Object.assign({ name: 'undefined', address: 0x00, invert: false }, setting);
-  thruster.socket = io.connect('http://localhost:5000');
+  thruster.socket = io.connect('http://localhost:80');
   thruster.started = false;
 
   const device = new i2c(thruster.setting.address, {device: '/dev/i2c-1'});
@@ -59,11 +59,10 @@ module.exports = function(setting){
   }
 
   thruster.socket.on('thrusterControl.start', function() {
+    console.log("thrusterstarts");
     thruster.start();
     thruster.socket.emit('thruster', thruster.setting.name + ': starting thruster');
   });
-
-
 
   thruster.stop = function(){
     i2cThrusterWrite(device, 0);
@@ -80,7 +79,7 @@ module.exports = function(setting){
     targetSpeed = power;
   }
 
-  thruster.socket.on('thrusterControl.thrust.'+ thruster.setting.name, function(power) {
+  thruster.socket.on('thrusterTarget.'+ thruster.setting.name, function(power) {
     thruster.thrust(power);
   });
 
