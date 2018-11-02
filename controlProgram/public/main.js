@@ -183,22 +183,42 @@ function DFC(direction, finecoarse) {
 
 	pop();
  };
+
+
+function draw() {
+	smooth();
+    resetMatrix();
+    background(255, 255, 255);
+    rect(50, 50, 300, 300, 50);
+    HorizUI(state.HFR, state.HFL, state.HRR, state.HRL);
+	//FR, FL, RR, RL
+	VertUI(state.VF, state.VR);
+	//VF, VR
+	MvtOrnt(state.drive, state.strafe, state.rotate, state.upDown, state.tilt);
+	//Drive, Strafe, Rotate, upDown, Tilt
+	DFC(state.direction, state.fineCoarse);
+	//Direction, fineCoarse
+};
+
+
+/* Testing using var i += 0.01111111
 var i = 1;
 function draw() {
 	smooth();
     resetMatrix();
     background(255, 255, 255);
     rect(50,50,300,300,50);
-    HorizUI(state.HFR,state.HFL,state.HRR,state.HRL);
+    HorizUI(i, i, i, i);
 	//FR, FL, RR, RL
-	VertUI(state.VF,state.VR);
+	VertUI(i, i);
 	//VF, VR
-	MvtOrnt(state.drive, state.strafe, state.rotate, state.upDown, state.tilt);
+	MvtOrnt(i, i, i, i, i);
 	//Drive, Strafe, Rotate, upDown, Tilt
-	DFC(state.direction, state.fineCoarse);
+	DFC(false, false);
 	//Direction, fineCoarse
     i+=0.01111111;
     if(i>=1){
         i=-1;
     };
 };
+*/
