@@ -152,10 +152,10 @@ function VertUI(Vf,Vr) {
 	pop();
 };
 //Direction, fineCoarse
-function DFC(direction, finecoarse) {
-	var dirText = boolean(direction) ? "Forward" : "Rear";
-	var fcText = boolean(finecoarse) ? "Fine" : "Coarse";
+function direction(direction) {
 	push();
+	var dirText
+	dirText = boolean(direction) ? "Forward" : "Rear";
 	noStroke();
 	if(boolean(direction)){
 		fill(255, 0, 0, 70);
@@ -164,61 +164,74 @@ function DFC(direction, finecoarse) {
 		fill(0, 0, 255, 70);
 		rect(385, 387.5, 60, 25)
 	}
+	pop();
+	textAlign(LEFT,TOP);
+	textSize(20);
+	text("Direction: " + dirText, 300, 390);
+};
+
+function fineCoarse(finecoarse) {
+	push();
+	var fcText
+	fcText = boolean(finecoarse) ? "Fine" : "Coarse";
+	noStroke();
 	if(boolean(finecoarse)){
 		fill(255, 0, 0, 70);
 		rect(403, 417.5, 60, 25);
 	} else {
 		fill(0, 0, 255, 70);
 		rect(403, 417.5, 80, 25);
-	}
+	};
 	pop();
 	textAlign(LEFT,TOP);
 	textSize(20);
-	text("Direction: " + dirText, 300, 390);
 	text("fineCoarse: " + fcText, 300, 420);
-
 };
- function DepthMeter(Depth){
+
+function DepthMeter(Depth){
 	push();
 
 	pop();
  };
 
-
+/*
 function draw() {
 	smooth();
-    resetMatrix();
-    background(255, 255, 255);
-    rect(50, 50, 300, 300, 50);
-    HorizUI(state.HFR, state.HFL, state.HRR, state.HRL);
+  resetMatrix();
+  background(255, 255, 255);
+  rect(50, 50, 300, 300, 50);
+  HorizUI(state.HFR, state.HFL, state.HRR, state.HRL);
 	//FR, FL, RR, RL
 	VertUI(state.VF, state.VR);
 	//VF, VR
 	MvtOrnt(state.drive, state.strafe, state.rotate, state.upDown, state.tilt);
 	//Drive, Strafe, Rotate, upDown, Tilt
-	DFC(state.direction, state.fineCoarse);
-	//Direction, fineCoarse
+	direction(state.direction);
+	//Direction
+	fineCoarse(state.fineCoarse);
+	//fineCoarse
 };
+*/
 
-
-/* Testing using var i += 0.01111111
+///* Testing using var i += 0.01111111
 var i = 1;
 function draw() {
 	smooth();
-    resetMatrix();
-    background(255, 255, 255);
-    rect(50,50,300,300,50);
-    HorizUI(i, i, i, i);
+  resetMatrix();
+  background(255, 255, 255);
+  rect(50,50,300,300,50);
+  HorizUI(i, i, i, i);
 	//FR, FL, RR, RL
 	VertUI(i, i);
 	//VF, VR
 	MvtOrnt(i, i, i, i, i);
 	//Drive, Strafe, Rotate, upDown, Tilt
-	DFC(false, false);
-	//Direction, fineCoarse
-    i+=0.01111111;
-    if(i>=1){
-        i=-1;
-    };
+	direction(true);
+	//Direction
+	fineCoarse(true);
+	//fineCoarse
+  i+=0.01111111;
+  if(i>=1){
+  	i=-1;
+  };
 };
-*/
