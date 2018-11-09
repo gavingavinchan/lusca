@@ -35,10 +35,11 @@ io.on('connection', function(socket) {
     return next();
   });
 });
-
+/*
 http.listen(80, function() {
   console.log('listening on *:80 ');
 });
+*/
 
 var thrustProfile = require("./thrustProfile6T.js");
 /*
@@ -68,7 +69,7 @@ var sensor = new ms5803();
 
 
 //why was the statusDisplay disabled during the first water trial?
-statusDisplay.init();
+//statusDisplay.init();
 
 var status = {
   gamepad: {

@@ -155,11 +155,11 @@ function VertUI(Vf,Vr) {
 //Direction, fineCoarse
 function direction(direction) {
 	push();
-	var dirText
+	var dirText;
 	if(boolean(direction)){
-		dirText = "Forward"
+		dirText = "Forward";
 	} else {
-		dirText = "Rear"
+		dirText = "Rear";
 	};
 	//dirText = boolean(direction) ? "Forward" : "Rear";
 	noStroke();
@@ -169,7 +169,7 @@ function direction(direction) {
 	} else {
 		fill(0, 0, 255, 70);
 		rect(385, 387.5, 60, 25)
-	}
+	};
 	pop();
 	textAlign(LEFT,TOP);
 	textSize(20);
@@ -178,12 +178,15 @@ function direction(direction) {
 
 function fineCoarse(finecoarse) {
 	push();
-	var fcText
+	var fcText;
 	if(boolean(finecoarse)){
-		fcText = "Fine"
+		fcText = "Fine";
+		console.log("inside" + fcText);
 	} else {
-		fcText = "Coarse"
+		fcText = "Coarse";
+		console.log('inside' + fcText);
 	};
+	console.log('outside' + fcText);
 	//fcText = boolean(finecoarse) ? "Fine" : "Coarse";
 	noStroke();
 	if(boolean(finecoarse)){
