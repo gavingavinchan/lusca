@@ -17,19 +17,19 @@ var state = {
 };
 
 var mapping = [
-   { channel: 'drive', vname: 'drive'},
-   { channel: 'strafe', vname: 'strafe'},
-   { channel: 'rotate', vname: 'rotate'},
-   { channel: 'upDown', vname: 'upDown'},
-   { channel: 'tilt', vname: 'tilt'},
-   { channel: 'thrusterControl.thrust.HFR', vname: 'HFR'},
-   { channel: 'thrusterControl.thrust.HFL', vname: 'HFL'},
-   { channel: 'thrusterControl.thrust.HRR', vname: 'HRR'},
-   { channel: 'thrusterControl.thrust.HRL', vname: 'HRL'},
-   { channel: 'thrusterControl.thrust.VF', vname: 'VF'},
-   { channel: 'thrusterControl.thrust.VR', vname: 'VR'},
-   { channel: 'profile.direction', vname: 'direction'},
-   { channel: 'profile.fineCoarse', vname: 'fineCoarse'},
+  { channel: 'drive', vname: 'drive'},
+  { channel: 'strafe', vname: 'strafe'},
+  { channel: 'rotate', vname: 'rotate'},
+  { channel: 'upDown', vname: 'upDown'},
+  { channel: 'tilt', vname: 'tilt'},
+  { channel: 'thrusterControl.thrust.HFR', vname: 'HFR'},
+  { channel: 'thrusterControl.thrust.HFL', vname: 'HFL'},
+  { channel: 'thrusterControl.thrust.HRR', vname: 'HRR'},
+  { channel: 'thrusterControl.thrust.HRL', vname: 'HRL'},
+  { channel: 'thrusterControl.thrust.VF', vname: 'VF'},
+  { channel: 'thrusterControl.thrust.VR', vname: 'VR'},
+  { channel: 'profile.direction', vname: 'direction'},
+  { channel: 'profile.fineCoarse', vname: 'fineCoarse'},
 ];
 
 mapping.forEach((element) => {
@@ -58,21 +58,21 @@ var canvas = document.getElementById("mycanvas");
 var context = canvas.getContext("2d");
 */
 function thruster() {
-    ellipse(0,-20,25,25);
-    ellipse(0,20,25,25);
-    rect(-30,-20,60,40);
+  ellipse(0,-20,25,25);
+  ellipse(0,20,25,25);
+  rect(-30,-20,60,40);
 };
 function arrow(Mag) {
 	stroke(0, 255, 0, abs(Mag*200) + 55);
-    strokeWeight(10);
-    line(0,0,0,Mag * -100);
-    push();
-    translate(0, -100 * Mag);
-    strokeWeight(1);
-    fill(0, 255, 0, abs(Mag*255));
-    triangle(0, -10 * Mag, -10, 0, 10, 0);
+  strokeWeight(10);
+  line(0,0,0,Mag * -100);
+  push();
+  translate(0, -100 * Mag);
+  strokeWeight(1);
+  fill(0, 255, 0, abs(Mag*255));
+  triangle(0, -10 * Mag, -10, 0, 10, 0);
 	fill(255);
-    pop();
+  pop();
 	noStroke();
 };
 function printText(String, X, Y, Size) {
@@ -81,46 +81,47 @@ function printText(String, X, Y, Size) {
 	text(String, X, Y);
 };
 function HorizUI(Fr,Fl,Rr,Rl) {
-    push();
+  push();
 	var FR = ((floor(Fr * 10000)) / 10000);
-    var FL = ((floor(Fl * 10000)) / 10000) * -1;
-    var RR = ((floor(Rr * 10000)) / 10000);
-    var RL = ((floor(Rl * 10000)) / 10000);
-    translate(200,200);
+  var FL = ((floor(Fl * 10000)) / 10000) * -1;
+  var RR = ((floor(Rr * 10000)) / 10000);
+  var RL = ((floor(Rl * 10000)) / 10000);
+  translate(200,200);
     //FR
-    push();
-    rotate(1.75 * PI);
-    translate(150,0);
-    thruster();
-    arrow(FR);
-    pop();
+  push();
+  rotate(1.75 * PI);
+  translate(150,0);
+  thruster();
+  arrow(FR);
+  pop();
 	printText(FR, 100, -50, 20);
-    //RR
-    push();
-    rotate(2.25 * PI);
-    translate(150,0);
-    thruster();
-    arrow(RR);
-    pop();
+  //RR
+  push();
+  rotate(2.25 * PI);
+  translate(150,0);
+  thruster();
+  arrow(RR);
+  pop();
 	printText(RR, 100, 50, 20);
-    //RL
-    push();
-    rotate(1.75 * PI);
-    translate(-150,0);
-    thruster();
-    arrow(RL);
-    pop();
+  //RL
+  push();
+  rotate(1.75 * PI);
+  translate(-150,0);
+  thruster();
+  arrow(RL);
+  pop();
 	printText(RL, -100, 50, 20);
-    //FL
-    push();
-    rotate(1.25 * PI);
-    translate(150,0);
-    thruster();
-    arrow(FL);
-    pop();
+  //FL
+  push();
+  rotate(1.25 * PI);
+  translate(150,0);
+  thruster();
+  arrow(FL);
+  pop();
 	printText( -1 * FL, -100, -50, 20);
 	pop();
 };
+
 function MvtOrnt(Drive, Strafe, Rotate, upDown, Tilt) {
 	textSize(20);
 	textAlign(LEFT,CENTER);
@@ -132,7 +133,7 @@ function MvtOrnt(Drive, Strafe, Rotate, upDown, Tilt) {
 };
 function VertUI(Vf,Vr) {
 	var VF = ((floor(Vf * 10000)) / 10000);
-    var VR = ((floor(Vr * 10000)) / 10000);
+  var VR = ((floor(Vr * 10000)) / 10000);
 	push();
 	translate(475,250);
 	//VF
@@ -155,7 +156,12 @@ function VertUI(Vf,Vr) {
 function direction(direction) {
 	push();
 	var dirText
-	dirText = boolean(direction) ? "Forward" : "Rear";
+	if(boolean(direction)){
+		dirText = "Forward"
+	} else {
+		dirText = "Rear"
+	};
+	//dirText = boolean(direction) ? "Forward" : "Rear";
 	noStroke();
 	if(boolean(direction)){
 		fill(255, 0, 0, 70);
@@ -173,7 +179,12 @@ function direction(direction) {
 function fineCoarse(finecoarse) {
 	push();
 	var fcText
-	fcText = boolean(finecoarse) ? "Fine" : "Coarse";
+	if(boolean(finecoarse)){
+		fcText = "Fine"
+	} else {
+		fcText = "Coarse"
+	};
+	//fcText = boolean(finecoarse) ? "Fine" : "Coarse";
 	noStroke();
 	if(boolean(finecoarse)){
 		fill(255, 0, 0, 70);
@@ -194,7 +205,7 @@ function DepthMeter(Depth){
 	pop();
  };
 
-/*
+
 function draw() {
 	smooth();
   resetMatrix();
@@ -211,9 +222,9 @@ function draw() {
 	fineCoarse(state.fineCoarse);
 	//fineCoarse
 };
-*/
 
-///* Testing using var i += 0.01111111
+
+/* Testing using var i += 0.01111111
 var i = 1;
 function draw() {
 	smooth();
@@ -235,3 +246,4 @@ function draw() {
   	i=-1;
   };
 };
+*/
