@@ -22,12 +22,12 @@ var mapping = [
   { channel: 'rotate', vname: 'rotate'},
   { channel: 'upDown', vname: 'upDown'},
   { channel: 'tilt', vname: 'tilt'},
-  { channel: 'thrusterControl.thrust.HFR', vname: 'HFR'},
-  { channel: 'thrusterControl.thrust.HFL', vname: 'HFL'},
-  { channel: 'thrusterControl.thrust.HRR', vname: 'HRR'},
-  { channel: 'thrusterControl.thrust.HRL', vname: 'HRL'},
-  { channel: 'thrusterControl.thrust.VF', vname: 'VF'},
-  { channel: 'thrusterControl.thrust.VR', vname: 'VR'},
+  { channel: 'thruster.thrust.HFR', vname: 'HFR'},
+  { channel: 'thruster.thrust.HFL', vname: 'HFL'},
+  { channel: 'thruster.thrust.HRR', vname: 'HRR'},
+  { channel: 'thruster.thrust.HRL', vname: 'HRL'},
+  { channel: 'thruster.thrust.VF', vname: 'VF'},
+  { channel: 'thruster.thrust.VR', vname: 'VR'},
   { channel: 'profile.direction', vname: 'direction'},
   { channel: 'profile.fineCoarse', vname: 'fineCoarse'},
 ];
@@ -156,20 +156,17 @@ function VertUI(Vf,Vr) {
 function direction(direction) {
 	push();
 	var dirText;
-	if(boolean(direction)){
+noStroke()
+	if(direction > 0){
 		dirText = "Forward";
-	} else {
-		dirText = "Rear";
-	};
-	//dirText = boolean(direction) ? "Forward" : "Rear";
-	noStroke();
-	if(boolean(direction)){
-		fill(255, 0, 0, 70);
+		fill(0, 0, 255, 70);
 		rect(385, 387.5, 85, 25);
 	} else {
-		fill(0, 0, 255, 70);
+		dirText = "Rear";
+		fill(255, 0, 0, 70);
 		rect(385, 387.5, 60, 25)
 	};
+	//dirText = boolean(direction) ? "Forward" : "Rear";
 	pop();
 	textAlign(LEFT,TOP);
 	textSize(20);
@@ -179,23 +176,17 @@ function direction(direction) {
 function fineCoarse(finecoarse) {
 	push();
 	var fcText;
+	noStroke()
 	if(boolean(finecoarse)){
 		fcText = "Fine";
-		console.log("inside" + fcText);
-	} else {
-		fcText = "Coarse";
-		console.log('inside' + fcText);
-	};
-	console.log('outside' + fcText);
-	//fcText = boolean(finecoarse) ? "Fine" : "Coarse";
-	noStroke();
-	if(boolean(finecoarse)){
 		fill(255, 0, 0, 70);
 		rect(403, 417.5, 60, 25);
 	} else {
+		fcText = "Coarse";
 		fill(0, 0, 255, 70);
 		rect(403, 417.5, 80, 25);
 	};
+	//fcText = boolean(finecoarse) ? "Fine" : "Coarse";
 	pop();
 	textAlign(LEFT,TOP);
 	textSize(20);

@@ -35,11 +35,9 @@ io.on('connection', function(socket) {
     return next();
   });
 });
-/*
 http.listen(80, function() {
   console.log('listening on *:80 ');
 });
-*/
 
 var thrustProfile = require("./thrustProfile6T.js");
 /*
@@ -54,6 +52,7 @@ var DTMFencoder = require("./DTMFencoderControl.js");
 DTMFencoder.init(0x20);
 
 */
+
 var ds4Control = require("./ds4Control.js");
 
 //TODO fix too many listener problem
@@ -69,7 +68,7 @@ var sensor = new ms5803();
 
 
 //why was the statusDisplay disabled during the first water trial?
-//statusDisplay.init();
+statusDisplay.init();
 
 var status = {
   gamepad: {

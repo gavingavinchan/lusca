@@ -3,7 +3,8 @@ var io = require('socket.io-client');
 
 
 const timeInterval = 200;
-const maxAccelerationPerSecond = 0.6;
+const maxAccelerationPerSecond = 0.5;
+const maxStepPerInterval = maxAccelerationPerSecond * (timeInterval/1000);
 
 
 var i2cThrusterWrite = function(device, _currentSpeed) {
@@ -23,8 +24,7 @@ module.exports = function(setting){
   //console.log(thruster.setting);
   var currentSpeed = 0,
     targetSpeed= 0,
-    invert= thruster.setting.invert ? -1 : 1,
-    maxStepPerInterval = maxAccelerationPerSecond * (timeInterval/1000);
+    invert= thruster.setting.invert ? -1 : 1;
 
   var loop = 0;
 
