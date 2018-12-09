@@ -11,11 +11,17 @@ imgWidth = img.shape[1]
 #ret,thresh = cv.threshold(img,)
 #cv.imshow('image',img)
 
-resizeIMG = cv.resize(img,(int(imgWidth/5),int(imgHeight/5)))
+resizeIMG = cv.resize(img,(int(imgWidth/10),int(imgHeight/10)))
+cv.imshow('resizedIMG',resizeIMG)
 
-ret, thresholdIMG = cv.threshold(resizeIMG,127,255,cv.THRESH_BINARY)
+blurIMG = cv.blur(resizeIMG,(5,5))
+cv.imshow('blurIMG',blurIMG)
 
-cv.imshow('image',thresholdIMG)
+ret, thresholdIMG = cv.threshold(blurIMG,127,255,cv.THRESH_BINARY)
+cv.imshow('thresholdIMG',thresholdIMG)
+
+edgeIMG = cv.Canny(thresholdIMG,100,200)
+cv.imshow('edgeIMG',edgeIMG)
 
 cv.waitKey(0)
 cv.destroyAllWindows()
