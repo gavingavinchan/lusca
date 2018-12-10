@@ -20,8 +20,24 @@ cv.imshow('blurIMG',blurIMG)
 ret, thresholdIMG = cv.threshold(blurIMG,127,255,cv.THRESH_BINARY)
 cv.imshow('thresholdIMG',thresholdIMG)
 
-edgeIMG = cv.Canny(thresholdIMG,100,200)
+edgeIMG = cv.Canny(thresholdIMG,100,200,apertureSize = 3)
 cv.imshow('edgeIMG',edgeIMG)
+
+'''
+lines = cv.HoughLines(edgeIMG,1,np.pi/180,200)
+for rho,theta in lines[0]:
+    a = np.cos(theta)
+    b = np.sin(theta)
+    x0 = a*rho
+    y0 = b*rho
+    x1 = int(x0 + 1000*(-b))
+    y1 = int(y0 + 1000*(a))
+    x2 = int(x0 - 1000*(-b))
+    y2 = int(y0 - 1000*(a))
+
+    cv.line(img,(x1,y1),(x2,y2),(0,0,255),2)
+cv.imshow('lineIMG',img)
+'''
 
 cv.waitKey(0)
 cv.destroyAllWindows()
