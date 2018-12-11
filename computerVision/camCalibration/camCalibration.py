@@ -3,7 +3,7 @@ import cv2 as cv
 import glob
 
 #termination criteria
-criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 25, 0.001)
+criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 #perpare objectpoints, like (0,0,0), (1,0,0)...
 objp = np.zeros((6*7,3), np.float32)
