@@ -44,5 +44,12 @@ newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))
 imgUndistorted = cv.undistort(img,mtx,dist,None,newCameraMTX)
 cv.imshow('undistorted', imgUndistorted)
 
+calibrationfile = cv.FileStorage("calibrationValues.xml", cv.FILE_STORAGE_WRITE)
+calibrationfile.write("mtx", mtx)
+calibrationfile.write("dist", dist)
+calibrationfile.write("newCameraMTX",newCameraMTX)
+calibrationfile.release()
+print("Camera matrix xml file released")
+
 cv.waitKey(0)
 cv.destroyAllWindows()
