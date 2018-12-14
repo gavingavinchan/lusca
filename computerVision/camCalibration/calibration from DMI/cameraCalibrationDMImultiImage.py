@@ -27,7 +27,7 @@ for path in imgPaths:
         corners = corners.reshape(-1,2)
 
         im_vis = im.copy()
-        cv. drawChessboardCorners(im_vis, (7,6), corners, ret)
+        cv.drawChessboardCorners(im_vis, (7,6), corners, ret)
         cv.imshow(str(numberOfphotosUsed), im_vis)
         imgPoints.append(corners)
         objPoints.append(worldPoints)

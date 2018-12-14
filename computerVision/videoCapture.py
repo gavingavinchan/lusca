@@ -1,15 +1,23 @@
 import numpy as np
 import cv2 as cv
 
+resizeValue = 0.2
+
 cap = cv.VideoCapture('checkerboardVideo.mp4')
 
-while(cap.isOpened()):
+ret = True
+while(ret and cap.isOpened()):
+    if cv.waitKey(1) & 0xFF == ord('q'):
+        break
+
     ret, frame = cap.read()
 
-    imgHeight = frame.shape[0]
-    imgWidth = frame.shape[1]
+    if(ret == False):
+        break
 
-    resizeIMG = cv.resize(frame,(int(imgWidth/5),int(imgHeight/5)))
+    imgHeight, imgWidth, layers  = frame.shape
+
+    resizeIMG = cv.resize(frame,(int(imgWidth*resizeValue),int(imgHeight*resizeValue)))
 
     gray = cv.cvtColor(resizeIMG,cv.COLOR_BGR2GRAY)
     cv.imshow('GreyVideo',gray)
@@ -26,8 +34,11 @@ while(cap.isOpened()):
     edgeIMG = cv.Canny(closingIMG,100,200)
     cv.imshow('edgeIMG',edgeIMG)
 
-    if cv.waitKey(1) & 0xFF == ord('q'):
-        break
+    print('in video loop')
+
+
+
+print('out of video loop')
 
 cap.release()
 cv.destroyAllWindows()
