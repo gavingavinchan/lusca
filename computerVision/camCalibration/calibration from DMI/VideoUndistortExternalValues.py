@@ -1,7 +1,9 @@
 import cv2 as cv
 import numpy as np
 
-cap = cv.VideoCapture('distortedVideo.mp4')
+resizeValue = 1.5
+
+cap = cv.VideoCapture(0)
 
 cvFile = cv.FileStorage("calibrationValues.xml",cv.FILE_STORAGE_READ)
 mtx = cvFile.getNode("mtx").mat()
@@ -13,14 +15,13 @@ while(cap.isOpened()):
     if(pause == False):
         ret, frame = cap.read()
 
-        #imgHeight = frame.shape[0]
-        #imgWidth = frame.shape[1]
+        imgHeight, imgWidth, layers = frame.shape
 
-        #resizeFrame = cv.resize(frame,(int(imgWidth/2),int(imgHeight/2)))
+        resizeIMG = cv.resize(frame,(int(imgWidth*resizeValue),int(imgHeight*resizeValue)))
 
-        cv.imshow("original", frame)
+        cv.imshow("original", resizeIMG)
 
-        undistortedFrame = cv.undistort(frame,mtx,dist,None,newCameraMTX)
+        undistortedFrame = cv.undistort(resizeIMG,mtx,dist,None,newCameraMTX)
         cv.imshow("undistorted", undistortedFrame)
 
     key = cv.waitKey(1)
@@ -28,7 +29,7 @@ while(cap.isOpened()):
         break
     elif key & 0xFF == ord(' '):
         pause = not pause
-        print("pause" + str(pause))
+        print("pause " + str(pause))
 
 cap.release()
 cv.destroyAllWindows()

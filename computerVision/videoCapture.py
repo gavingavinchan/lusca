@@ -6,9 +6,18 @@ resizeValue = 0.2
 cap = cv.VideoCapture('checkerboardVideo.mp4')
 
 ret = True
+pause = False
 while(ret and cap.isOpened()):
-    if cv.waitKey(1) & 0xFF == ord('q'):
+    key = cv.waitKey(1)
+
+    if key & 0xFF == ord('q'):
         break
+    elif key & 0xFF == ord(' '):
+        pause = not pause
+        print("pause" + str(pause))
+
+    if(pause == False):
+        ret, frame = cap.read()
 
     ret, frame = cap.read()
 

@@ -12,7 +12,7 @@ objPoints = []
 imgPoints =[]
 numberOfFramesUsed = 0
 
-cap = cv.VideoCapture('distortedVideo.mp4')
+cap = cv.VideoCapture('distortedVideo2.mp4')
 
 imgWidth = 0
 imgHeight = 0
@@ -35,7 +35,7 @@ while(ret and cap.isOpened()):
         if(ret == False):
             break
 
-        imgHeight, imgWidth, layers  = frame.shape
+        imgHeight, imgWidth, layers = frame.shape
 
         resizeIMG = cv.resize(frame,(int(imgWidth*resizeValue),int(imgHeight*resizeValue)))
 
@@ -56,21 +56,21 @@ while(ret and cap.isOpened()):
         else:
             cv.imshow('video', frame)
 
-while(True):
-    try:
-        ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objPoints,imgPoints,(imgHeight,imgWidth),None,None)
+if objPoints:
+    print('asdfadsf')
+    ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objPoints,imgPoints,(imgHeight,imgWidth),None,None)
 
-        #h,w = img.shape[:2]
-        newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(imgWidth,imgHeight),1,(imgWidth,imgHeight))
+    #h,w = img.shape[:2]
+    newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(imgWidth,imgHeight),1,(imgWidth,imgHeight))
 
-        calibrationfile = cv.FileStorage("calibrationValuesVideo.xml", cv.FILE_STORAGE_WRITE)
-        calibrationfile.write("mtx", mtx)
-        calibrationfile.write("dist", dist)
-        calibrationfile.write("newCameraMTX",newCameraMTX)
-        calibrationfile.release()
-        print("Camera matrix xml file released")
-    except:
-        print('error in calibration attempt, likely no corners found (yet)')
+    calibrationfile = cv.FileStorage("calibrationValuesVideo.xml", cv.FILE_STORAGE_WRITE)
+    calibrationfile.write("mtx", mtx)
+    calibrationfile.write("dist", dist)
+    calibrationfile.write("newCameraMTX",newCameraMTX)
+    calibrationfile.release()
+    print("Camera matrix xml file released")
+else:
+    print('no corners found (yet)')
 
 
 cap.release()
