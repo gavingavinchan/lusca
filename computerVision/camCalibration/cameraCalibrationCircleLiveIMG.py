@@ -39,7 +39,7 @@ while(True):
     except:
         print("no corners")
 
-    retCorner, corners = cv.findChessboardCorners(blurGaussian, (7,6))
+    retCorner, corners = cv.findCirclesGrid(blurGaussian, (4,11), flags=cv.CALIB_CB_ASYMMETRIC_GRID)
 
     if key & 0xFF == ord('q'):
         print('quit loop')

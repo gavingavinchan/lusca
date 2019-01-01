@@ -3,7 +3,7 @@ import cv2 as cv
 
 resizeValue = 1
 
-cap = cv.VideoCapture("http://192.168.0.103:8000/stream.mjpg") #or: highres.mjpg
+cap = cv.VideoCapture("http://192.168.0.102:8000/stream.mjpg") #or: highres.mjpg
 
 ret = True
 pause = False

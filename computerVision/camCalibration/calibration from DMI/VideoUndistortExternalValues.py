@@ -3,9 +3,9 @@ import numpy as np
 
 resizeValue = 1.5
 
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture("http://192.168.0.102:8000/stream.mjpg") #or: highres.mjpg
 
-cvFile = cv.FileStorage("calibrationValues.xml",cv.FILE_STORAGE_READ)
+cvFile = cv.FileStorage("calibrationValuesVideo.xml",cv.FILE_STORAGE_READ)
 mtx = cvFile.getNode("mtx").mat()
 dist = cvFile.getNode("dist").mat()
 newCameraMTX = cvFile.getNode("newCameraMTX").mat()
