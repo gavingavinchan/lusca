@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import glob
 
 resizeValue = 1
 
@@ -33,17 +34,22 @@ while(True):
 
     blurGaussian = cv.GaussianBlur(gray, (5,5),0)
 
-    try:
-        imgPoints.append(corners2)
-        objPoints.append(worldPoints)
-    except:
-        print("no corners")
+
 
     retCorner, corners = cv.findChessboardCorners(blurGaussian, (7,6))
 
     if key & 0xFF == ord('q'):
         print('quit loop')
         break
+    elif key& 0xFF == ord('r'):         #delete frame with badly detected chessboard corners
+        try:
+            del imgPoints[-1]
+            del objPoints[-1]
+        except:
+            print('no more imgPoints & objPoints to delete')
+        cv.destroyWindow('Recognised: ' + str(numberOfFramesUsed))
+        if numberOfFramesUsed > 0:
+            numberOfFramesUsed -= 1
     elif key & 0xFF == ord(' '):
         print('will take photo')
         photosTaken += 1
@@ -56,9 +62,11 @@ while(True):
 
             frame_vis = blurGaussian.copy()
             cv.drawChessboardCorners(frame_vis, (7,6), corners2, ret)
+            #cv.drawChessboardCorners(frame_vis, (7,6), corners, ret)
             cv.imshow('Recognised: ' + str(numberOfFramesUsed), frame_vis)
-            #imgPoints.append(corners)
-            #objPoints.append(worldPoints)
+            imgPoints.append(corners2)
+            objPoints.append(worldPoints)
+            print("objPoints and imgPoints added.")
 
         else:
             '''
@@ -82,9 +90,18 @@ if objPoints:
     print('calibrating...')
     ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objPoints,imgPoints,blurGaussian.shape[::-1],None,None)
 
+    totalError = 0
+    totalPoints = 0
+    for i in range(len(objPoints)):
+        imgPoints2, _ = cv.projectPoints(objPoints[i],rvecs[i],tvecs[i],mtx,dist)
+        imgPoints2 = imgPoints2.reshape(-1,2)
+        totalError += np.sum(np.abs(imgPoints[i]-imgPoints2)**2)
+        totalPoints += len(objPoints[i])
+        print("mean error", totalError/totalPoints)
+
     print("calibrateCamera done, getting optimalNewCameraMatrix")
     #h,w = img.shape[:2]
-    newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(imgWidth,imgHeight),0,(imgWidth,imgHeight))
+    newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(imgWidth,imgHeight),1,(imgWidth,imgHeight))
 
     calibrationfile = cv.FileStorage("calibrationValuesVideo.xml", cv.FILE_STORAGE_WRITE)
     calibrationfile.write("mtx", mtx)

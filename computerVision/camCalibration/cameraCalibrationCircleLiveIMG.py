@@ -33,6 +33,7 @@ while(True):
 
     blurGaussian = cv.GaussianBlur(gray, (5,5),0)
 
+
     try:
         imgPoints.append(corners2)
         objPoints.append(worldPoints)

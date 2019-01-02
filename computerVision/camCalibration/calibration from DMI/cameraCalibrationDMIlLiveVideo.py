@@ -7,6 +7,8 @@ resizeValue = 1
 x,y = np.meshgrid(range(7),range(6))
 worldPoints = np.hstack((x.reshape(42,1),y.reshape(42,1),np.zeros((42,1)))).astype(np.float32)
 
+criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+
 
 objPoints = []
 imgPoints =[]
@@ -39,19 +41,23 @@ while(ret and cap.isOpened()):
 
         resizeIMG = cv.resize(frame,(int(imgWidth*resizeValue),int(imgHeight*resizeValue)))
 
-        retCorner, corners = cv.findChessboardCorners(resizeIMG, (7,6))
+        gray = cv.cvtColor(resizeIMG,cv.COLOR_BGR2GRAY)
+
+        retCorner, corners = cv.findChessboardCorners(gray, (7,6))
 
 
         if retCorner:
             numberOfFramesUsed += 1
 
             corners = corners.reshape(-1,2)
+            corners2 = cv.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
 
-            frame_vis = frame.copy()
-            cv.drawChessboardCorners(frame_vis, (7,6), corners, ret)
-            cv.imshow(str(numberOfFramesUsed), frame_vis)
-            imgPoints.append(corners)
+            frame_vis = gray.copy()
+            cv.drawChessboardCorners(frame_vis, (7,6), corners2, ret)
+            cv.imshow('Recognised: ' + str(numberOfFramesUsed), frame_vis)
+            imgPoints.append(corners2)
             objPoints.append(worldPoints)
+            print("objPoints and imgPoints added.")
 
         else:
             cv.imshow('video', frame)
