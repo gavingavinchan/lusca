@@ -68,6 +68,9 @@ while(True):
             objPoints.append(worldPoints)
             print("objPoints and imgPoints added.")
 
+
+
+
         else:
             '''
             h = 100
@@ -79,6 +82,17 @@ while(True):
 
         print("photosTaken: ", photosTaken, "Recognised: ", numberOfFramesUsed)
 
+    elif key & 0xFF == ord('p'):
+        try:
+            ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objPoints,imgPoints,blurGaussian.shape[::-1],None,None)
+            newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(imgWidth,imgHeight),1,(imgWidth,imgHeight))
+
+
+            undistortedFrame = cv.undistort(blurGaussian,mtx,dist,None,newCameraMTX)
+            cv.imshow("undistorted" + str(numberOfFramesUsed), undistortedFrame)
+            print("asdafad")
+        except:
+                print('no corners found (yet)')
     else:
         cv.imshow('preview', frame)
 

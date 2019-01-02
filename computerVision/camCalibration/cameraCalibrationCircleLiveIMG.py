@@ -72,6 +72,7 @@ while(True):
 
         print("photosTaken: ", photosTaken, "Recognised: ", numberOfFramesUsed)
 
+
     else:
         cv.imshow('preview', frame)
 
