@@ -1,9 +1,10 @@
 import cv2 as cv
 import numpy as np
 
-resizeValue = 1.5
+resizeValue = 1 #TODO: change to take this can be changed without distorting the undistortion
 
 cap = cv.VideoCapture("http://192.168.0.102:8000/stream.mjpg") #or: highres.mjpg
+#cap = cv.VideoCapture(0)
 
 cvFile = cv.FileStorage("calibrationValuesVideo.xml",cv.FILE_STORAGE_READ)
 mtx = cvFile.getNode("mtx").mat()

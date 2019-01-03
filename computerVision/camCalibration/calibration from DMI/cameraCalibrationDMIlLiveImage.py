@@ -26,17 +26,6 @@ photosTaken = 0
 while(True):
     ret, frame = cap.read()
 
-    imgHeight, imgWidth, layers = frame.shape
-
-    resizeIMG = cv.resize(frame,(int(imgWidth*resizeValue),int(imgHeight*resizeValue)))
-
-    gray = cv.cvtColor(resizeIMG,cv.COLOR_BGR2GRAY)
-
-    blurGaussian = cv.GaussianBlur(gray, (5,5),0)
-
-
-
-    retCorner, corners = cv.findChessboardCorners(blurGaussian, (7,6))
 
     if key & 0xFF == ord('q'):
         print('quit loop')
@@ -54,6 +43,13 @@ while(True):
         print('will take photo')
         photosTaken += 1
 
+        gray = cv.cvtColor(frame,cv.COLOR_BGR2GRAY)
+
+        blurGaussian = cv.GaussianBlur(gray, (5,5),0)
+
+
+        retCorner, corners = cv.findChessboardCorners(blurGaussian, (7,6))
+
         if retCorner:
             numberOfFramesUsed += 1
 
@@ -62,35 +58,28 @@ while(True):
 
             frame_vis = blurGaussian.copy()
             cv.drawChessboardCorners(frame_vis, (7,6), corners2, ret)
-            #cv.drawChessboardCorners(frame_vis, (7,6), corners, ret)
             cv.imshow('Recognised: ' + str(numberOfFramesUsed), frame_vis)
             imgPoints.append(corners2)
             objPoints.append(worldPoints)
             print("objPoints and imgPoints added.")
 
 
-
-
         else:
-            '''
-            h = 100
-            w = 100
-            cropIMG = frame[y:y+h, x:x+w].copy()
-            cv.imshow(str(photosTaken), cropIMG)
-            '''
             cv.imshow(str(photosTaken), blurGaussian)
+            cv.destroyWindow(str(photosTaken-1))
 
         print("photosTaken: ", photosTaken, "Recognised: ", numberOfFramesUsed)
 
     elif key & 0xFF == ord('p'):
         try:
+            imgHeight, imgWidth, layers = frame.shape
+
             ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objPoints,imgPoints,blurGaussian.shape[::-1],None,None)
             newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(imgWidth,imgHeight),1,(imgWidth,imgHeight))
 
 
             undistortedFrame = cv.undistort(blurGaussian,mtx,dist,None,newCameraMTX)
             cv.imshow("undistorted" + str(numberOfFramesUsed), undistortedFrame)
-            print("asdafad")
         except:
                 print('no corners found (yet)')
     else:
@@ -102,6 +91,7 @@ while(True):
 
 if objPoints:
     print('calibrating...')
+    imgHeight, imgWidth, layers = frame.shape
     ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objPoints,imgPoints,blurGaussian.shape[::-1],None,None)
 
     totalError = 0
@@ -117,12 +107,20 @@ if objPoints:
     #h,w = img.shape[:2]
     newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(imgWidth,imgHeight),1,(imgWidth,imgHeight))
 
-    calibrationfile = cv.FileStorage("calibrationValuesVideo.xml", cv.FILE_STORAGE_WRITE)
-    calibrationfile.write("mtx", mtx)
-    calibrationfile.write("dist", dist)
-    calibrationfile.write("newCameraMTX",newCameraMTX)
-    calibrationfile.release()
-    print("Camera matrix xml file released")
+
+    print('Save camera calibration matrix? Press y to save')
+
+    key = cv.waitKey(0)
+    if key & 0xFF == ord('y'):
+        calibrationfile = cv.FileStorage("calibrationValuesVideo.xml", cv.FILE_STORAGE_WRITE)
+        calibrationfile.write("mtx", mtx)
+        calibrationfile.write("dist", dist)
+        calibrationfile.write("newCameraMTX",newCameraMTX)
+        calibrationfile.release()
+        print("Camera matrix xml file released")
+    else:
+        print("matrix NOT saved")
+
 else:
     print('no corners found (yet)')
 
