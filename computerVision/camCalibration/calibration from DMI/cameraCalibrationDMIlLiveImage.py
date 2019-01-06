@@ -15,7 +15,7 @@ objPoints = []
 imgPoints =[]
 numberOfFramesUsed = 0
 
-cap = cv.VideoCapture("http://192.168.0.102:8000/stream.mjpg") #or: highres.mjpg
+cap = cv.VideoCapture("http://192.168.0.128:8000/stream.mjpg") #or: highres.mjpg
 #cap = cv.VideoCapture(0)
 
 imgWidth = 0
@@ -40,7 +40,11 @@ while(True):
         if numberOfFramesUsed > 0:
             numberOfFramesUsed -= 1
     elif key & 0xFF == ord(' '):
-        print('will take photo')
+        try:
+            cv.destroyWindow("undistorted" + str(photosTaken))
+        except:
+            pass
+
         photosTaken += 1
 
         gray = cv.cvtColor(frame,cv.COLOR_BGR2GRAY)
@@ -70,17 +74,36 @@ while(True):
 
         print("photosTaken: ", photosTaken, "Recognised: ", numberOfFramesUsed)
 
-    elif key & 0xFF == ord('p'):
-        try:
-            imgHeight, imgWidth, layers = frame.shape
+    elif key & 0xFF == ord('p'):            #preview undistorted image
+        if objPoints:
+            try:
+                cv.destroyWindow("undistorted" + str(photosTaken))
+            except:
+                pass
+
+            ret, frame = cap.read()
+            gray = cv.cvtColor(frame,cv.COLOR_BGR2GRAY)
+            blurGaussian = cv.GaussianBlur(gray, (5,5),0)
+
+            #imgHeight, imgWidth, layers = frame.shape #difference between this and frame.shape[:2]?
+            h,w = frame.shape[:2]
 
             ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objPoints,imgPoints,blurGaussian.shape[::-1],None,None)
-            newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(imgWidth,imgHeight),1,(imgWidth,imgHeight))
+            #newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(imgWidth,imgHeight),1,(imgWidth,imgHeight))
+            newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(w,h),0,(w,h))
+
 
 
             undistortedFrame = cv.undistort(blurGaussian,mtx,dist,None,newCameraMTX)
-            cv.imshow("undistorted" + str(numberOfFramesUsed), undistortedFrame)
-        except:
+
+            try:                    #TODO VERY unreliable!!!!!!!!!
+                #crop
+                x,y,w,h = roi
+                undistortedFrame = undistortedFrame[y:y+h, x:x+w]
+                cv.imshow("undistorted" + str(photosTaken), undistortedFrame)
+            except Exception as e:
+                print(e)
+        else:
                 print('no corners found (yet)')
     else:
         cv.imshow('preview', frame)
@@ -104,8 +127,8 @@ if objPoints:
         print("mean error", totalError/totalPoints)
 
     print("calibrateCamera done, getting optimalNewCameraMatrix")
-    #h,w = img.shape[:2]
-    newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(imgWidth,imgHeight),1,(imgWidth,imgHeight))
+    h,w = img.shape[:2]
+    newCameraMTX, roi = cv.getOptimalNewCameraMatrix(mtx,dist,(w,h),0,(w,h))
 
 
     print('Save camera calibration matrix? Press y to save')
@@ -116,6 +139,7 @@ if objPoints:
         calibrationfile.write("mtx", mtx)
         calibrationfile.write("dist", dist)
         calibrationfile.write("newCameraMTX",newCameraMTX)
+        calibrationfile.write("roi",roi)
         calibrationfile.release()
         print("Camera matrix xml file released")
     else:
