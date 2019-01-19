@@ -1,7 +1,7 @@
 var i2c = require('i2c');
 
 var io = require('socket.io-client');
-var socket = io.connect('http://localhost:5000');
+var socket = io.connect('http://localhost:80');
 
 var CAMController = {};
 exports.init = function(CAMControllerAddr) {
@@ -14,4 +14,6 @@ var servo = function(command,servoMicros) {
 
 socket.on('servo', function(_servo) {
   servo(_servo.command, _servo.micros);
+  //console.log(_servo.command);
+  //console.log(_servo.micros);
 })

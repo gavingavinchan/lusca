@@ -151,7 +151,7 @@ controller.on("dpadUp:press", function() {
     status.video.ch1 = true;
   }
 
-  socket.emit('servo', {command:0x02, micros: _micros});
+  socket.emit('servo', {command:0x11, micros: _micros});
   //console.log('_micros: ' + _micros);
   socket.emit('CAM.ch1', status.video.ch1);
 })
@@ -169,7 +169,24 @@ controller.on("dpadLeft:press", function() {
     status.video.ch2 = true;
   }
 
-  socket.emit('servo', {command:0x03, micros: _micros});
+  socket.emit('servo', {command:0x12, micros: _micros});
   //console.log('_micros: ' + _micros);
   socket.emit('CAM.ch2', status.video.ch2);
+})
+
+controller.on("dpadDown:press", function() {
+  let _micros = 1500;
+  if(status.video.ch2) {
+    //servoControl.servo(0x02,1500);
+    _micros = 1500;
+    status.video.ch2 = false;
+  } else {
+    //servoControl.servo(0x02,1100);
+    _micros = 1100;
+    status.video.ch2 = true;
+  }
+
+  socket.emit('servo', {command:0x13, micros: _micros});
+  //console.log('_micros: ' + _micros);
+  socket.emit('CAM.ch3', status.video.ch3);
 })

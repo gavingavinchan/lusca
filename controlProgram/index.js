@@ -38,9 +38,9 @@ io.on('connection', function(socket) {
 http.listen(80, function() {
   console.log('listening on *:80 ');
 });
-
+//asdasd
 var thrustProfile = require("./thrustProfile6T.js");
-/*
+
 var servoControl = require("./servoControl.js");
 servoControl.init(0x17);
 
@@ -50,8 +50,8 @@ const EM2 = new EMControl({name: 'EM2', address: 0x16});
 
 var DTMFencoder = require("./DTMFencoderControl.js");
 DTMFencoder.init(0x20);
+//asdsa
 
-*/
 
 var ds4Control = require("./ds4Control.js");
 
