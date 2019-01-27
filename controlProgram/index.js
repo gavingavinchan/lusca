@@ -55,20 +55,21 @@ DTMFencoder.init(0x20);
 
 var ds4Control = require("./ds4Control.js");
 
-//TODO fix too many listener problem
-var statusDisplay = require("./statusDisplayNEW.js");
+
 
 
 var ms5803 = require('ms5803');
 var sensor = new ms5803();
 
-
-
 //io.emit('DTMFpin', DTMFpin);
 
 
-//why was the statusDisplay disabled during the first water trial?
+//TODO fix too many listener problem
+var statusDisplay = require("./statusDisplayNEW.js");
 statusDisplay.init();
+
+var pinger = require("./pinger.js");
+pinger.init(0x70);
 
 var status = {
   gamepad: {
