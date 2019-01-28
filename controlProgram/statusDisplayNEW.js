@@ -47,6 +47,10 @@ var status = {
     ch1: true,
     ch2: true
   },
+  pinger: {
+    pinVoltage: 0,
+    inputVoltage: 0
+  },
   message: []
 };
 
@@ -119,6 +123,10 @@ socket.on('CAM.ch1', function(_channel) {
 
 socket.on('CAM.ch2', function(_channel) {
   status.video.ch2 = _channel;
+})
+
+socket.on('pingerInputVoltage', function(_inputVoltage) {
+  status.pinger.inputVoltage = _inputVoltage;
 })
 
 
@@ -206,6 +214,17 @@ function draw() {
 
   booleanLine(outputBuffer, "Video Channel 2: : ", 17, status.video.ch2, "CAM 3", "CAM 4");
 
+
+  var blankLine = new Line(outputBuffer).fill().store();
+
+  var blankLine = new Line(outputBuffer).fill().store();
+
+
+  new Line(outputBuffer)
+    .column("voltage", 13)
+    .column(Gauge(status.pinger.inputVoltage, 12, 40, 12, status.pinger.inputVoltage.toFixed(3)),80)
+    .fill()
+    .store();
 
   clear();
   outputBuffer.output();

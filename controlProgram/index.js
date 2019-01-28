@@ -66,7 +66,7 @@ var sensor = new ms5803();
 
 //TODO fix too many listener problem
 var statusDisplay = require("./statusDisplayNEW.js");
-statusDisplay.init();
+// statusDisplay.init();
 
 var pinger = require("./pinger.js");
 pinger.init(0x70);

@@ -190,3 +190,7 @@ controller.on("dpadDown:press", function() {
   //console.log('_micros: ' + _micros);
   socket.emit('CAM.ch3', status.video.ch3);
 })
+
+setInterval(function() {
+  socket.emit('Ping');
+},50);

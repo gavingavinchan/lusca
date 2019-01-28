@@ -10,10 +10,28 @@ exports.init = function(pingerAddr) {
 
 
 var pingResults = 0;
-socket.on('ping', function() {
-  pinger.device.readBytes(0x99, 16, function(err,res) {
+var voltage = 0;
+socket.on('Ping', function() {
+  pinger.device.readBytes(0x95, 4, function(err,res) {
+    if (err){
+      console.log("error reading" + err);
+      return;
+    }
     pingResults = res;
+    if(res[2]==0x00 && res[3]==0xFF){
+      console.log(res[0] + "\t" + res[1]);
+    }
+    else{
+      console.log("FAILED");
+    }
+    /*
+    console.log(res[0] + "\t" + res[1]);
+    var raw = (pingResults[0]<<8) | (pingResults[1]);
+    pinVoltage = raw/1024*5;
+    inputVoltage = raw/1024*12;
+    socket.emit('pingerPinVoltage', pinVoltage);
+    socket.emit('pingerInputVoltage', inputVoltage);
+    */
   });
-  console.log("Ping Results: " + pingResults);
-  socket.emit('pingResults', pingResults);
+
 })
