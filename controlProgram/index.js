@@ -42,14 +42,14 @@ http.listen(80, function() {
 var thrustProfile = require("./thrustProfile6T.js");
 
 var servoControl = require("./servoControl.js");
-servoControl.init(0x17);
+//servoControl.init(0x17);
 
 const EMControl = require("./EMControl.js");
 const EM1 = new EMControl({name: 'EM1', address: 0x14});
 const EM2 = new EMControl({name: 'EM2', address: 0x16});
 
 var DTMFencoder = require("./DTMFencoderControl.js");
-DTMFencoder.init(0x20);
+//DTMFencoder.init(0x20);
 //asdsa
 
 
@@ -66,7 +66,7 @@ var sensor = new ms5803();
 
 //TODO fix too many listener problem
 var statusDisplay = require("./statusDisplayNEW.js");
-// statusDisplay.init();
+//statusDisplay.init();
 
 var pinger = require("./pinger.js");
 pinger.init(0x70);

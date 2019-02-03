@@ -2,13 +2,17 @@ var i2c = require('i2c');
 var io = require('socket.io-client');
 
 
-const timeInterval = 200;
+const timeInterval = 50;
 const maxAccelerationPerSecond = 0.5;
 const maxStepPerInterval = maxAccelerationPerSecond * (timeInterval/1000);
 
 
 var i2cThrusterWrite = function(device, _currentSpeed) {
-  device.writeBytes(0x00, [_currentSpeed*32767 >>> 8, (_currentSpeed*32767)%255], function(err) {});
+  device.writeBytes(0x00, [_currentSpeed*32767 >>> 8, (_currentSpeed*32767)%255], function(err) {
+    if (err){
+      console.log("error in thruster: ", err);
+    }
+  });
 }
 
 module.exports = function(setting){
