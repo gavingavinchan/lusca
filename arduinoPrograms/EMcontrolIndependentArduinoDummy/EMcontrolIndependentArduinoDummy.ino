@@ -1,4 +1,5 @@
-#include "TinyWireS.h"                  // wrapper class for I2C slave routines
+#include <Wire.h>
+
 #include <EEPROM.h>
 
 #define TWI_RX_BUFFER_SIZE 16
@@ -15,35 +16,36 @@ volatile byte regPosition =0;
 bool execute = false;
 
 
-
-void Blink(byte times){ 
-  for (byte i=0; i< times; i++){
-    digitalWrite(ledPin,HIGH);
-    tws_delay(175);
-    digitalWrite(ledPin,LOW);
-    tws_delay(175);
-  }
-}
-
 byte rp =0;
 void executeCommand() {
   byte rp = regPosition;
-  
-  if(rp == 0x21) {
-    analogWrite(leftEM, i2cRegs[rp]);
+  //rp = regPosition;
+  //Blink(1);
+  //tws_delay(2000);
+  Serial.println("executeCommand");
+  Serial.print("regPosition: ");
+  Serial.println(regPosition);
+  if(regPosition == 0x21) {
+    analogWrite(leftEM, i2cRegs[regPosition]);
+    Serial.print("0x21 in: ");
+    Serial.println(i2cRegs[regPosition]);
   } else if(rp == 0x22) {
-    analogWrite(rightEM, i2cRegs[rp]);
+    analogWrite(rightEM, i2cRegs[regPosition]);
   } else if(rp == 0x10) {
-    Blink(i2cRegs[rp]);
-  } else if(rp == 0x99) {
-    //long raw = analogRead(VDpin);
+    //Blink(i2cRegs[regPosition]);
+  } else if(regPosition == 0x99) {
+    //byte raw = analogRead(VDpin);
     //Blink(1);
     long raw = 985;
-    i2cRegs[rp] = (raw >> 8) & 0xFF;   //high byte
-    i2cRegs[rp+1] = raw & 0xFF;        //low byte     hahaha low B
+    i2cRegs[regPosition] = raw >> 8;   //high byte
+    i2cRegs[regPosition+1] = raw & 0xFF;        //low byte     hahaha low B
+    Serial.println("in 0x99");
+    Serial.println(regPosition);
+    Serial.println(i2cRegs[regPosition]);
+    Serial.println(i2cRegs[regPosition+1]);
   } else if(rp == 0xCE) {
-    EEPROM.put(0, i2cRegs[rp]);                //change address value
-    Blink(1000);    
+    EEPROM.put(0, i2cRegs[regPosition]);                //change address value
+    //Blink(1000);    
     delay(1000);
   }
   /*
@@ -82,7 +84,7 @@ void executeCommand() {
 
 
 void requestEvent() {
-  TinyWireS.send(i2cRegs[regPosition]);
+  //TinyWireS.send(i2cRegs[regPosition]);
   //TinyWireS.send(regPosition);
   regPosition++;
   if(regPosition >= regSize) {
@@ -93,6 +95,7 @@ void requestEvent() {
 
 
 void receiveEvent(byte numBytes) {
+  //Serial.println("recieved");
   if(numBytes < 1) {
     //no bytes, sanity check
     return;
@@ -104,7 +107,9 @@ void receiveEvent(byte numBytes) {
 
   execute = true;
 
-  regPosition = TinyWireS.receive();
+
+  regPosition = Wire.read();
+  //Serial.println(regPosition);
   numBytes--;
 
   if(!numBytes) {
@@ -113,7 +118,7 @@ void receiveEvent(byte numBytes) {
   }
 
   while(numBytes--) {
-    i2cRegs[regPosition] = TinyWireS.receive();
+    i2cRegs[regPosition] = Wire.read();
     
     regPosition++;
     if(regPosition >= regSize) {
@@ -125,15 +130,14 @@ void receiveEvent(byte numBytes) {
 
 
 void setup() {
-  volatile byte I2C_SLAVE_ADDR = 0;
-  I2C_SLAVE_ADDR = EEPROM.read(0);         //get its own slave address from EEPROM
-  if(I2C_SLAVE_ADDR > 127 || I2C_SLAVE_ADDR < 1) {
-    I2C_SLAVE_ADDR = 100;
-  }
-  TinyWireS.begin(I2C_SLAVE_ADDR);      // init I2C Slave mode
+  volatile byte I2C_SLAVE_ADDR = 0x15;
+
+  Wire.begin(I2C_SLAVE_ADDR);      // init I2C Slave mode
+  Serial.begin(57600);
+  Serial.println("start");
   
-  TinyWireS.onReceive(receiveEvent);
-  TinyWireS.onRequest(requestEvent);
+  Wire.onReceive(receiveEvent);
+  Wire.onRequest(requestEvent);
 
   pinMode(leftEM,OUTPUT);
   pinMode(rightEM,OUTPUT);
@@ -145,6 +149,7 @@ void loop() {
   if(execute) {       //ok
     executeCommand();
     execute = false;
+    Serial.println("execute");
   }
-  TinyWireS_stop_check();
+  //TinyWireS_stop_check();
 }
