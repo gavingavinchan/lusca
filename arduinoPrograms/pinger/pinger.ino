@@ -14,8 +14,10 @@ void setup() {
 }
 
 int voltage = 0;
+
 void loop() {
   // put your main code here, to run repeatedly:
+  
   if (TinyWireS.available()){           // got I2C input!
     byte byteCommand = TinyWireS.receive();     //get command to turn motor
     if(byteCommand == 0x99) {            //analog write from i2c read
@@ -37,6 +39,7 @@ void loop() {
       Blink(times);
     }
   }
+  
 }
 
 

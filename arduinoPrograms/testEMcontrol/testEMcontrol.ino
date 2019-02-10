@@ -13,11 +13,46 @@
 #include <Wire.h>
 #define ledPin 13
 
-#define slaveAddr 0x17
+#define slaveAddr 0x15
 
 void setup() {
   Wire.begin(); // join i2c bus (address optional for master)
   pinMode(ledPin, OUTPUT);
+  Serial.begin(57600);
+
+  Wire.beginTransmission(slaveAddr);
+  Wire.write(0x10);
+  Wire.write(3);
+  Wire.endTransmission();
+  delay(10);
+
+  Wire.beginTransmission(slaveAddr);
+  Wire.write(0x99);
+  Wire.endTransmission();
+  delay(10);
+
+  Wire.requestFrom(slaveAddr,1);
+  delay(500);
+
+  while(Wire.available()) {
+    byte hb = Wire.read();
+    Serial.println(hb);
+  }
+
+  Blink(2);
+  delay(3000);
+  
+  Wire.beginTransmission(slaveAddr);
+  Wire.write(0x9A);
+  Wire.endTransmission();
+  delay(10);
+  Wire.requestFrom(slaveAddr,1);
+  delay(500);
+
+  while(Wire.available()) {
+    byte lb = Wire.read();
+    Serial.println(lb);
+  }
 }
 
 byte x = 0;
@@ -25,22 +60,44 @@ byte x = 0;
 void loop() {
   
   Blink(1);                // Arduino Master Blink
-  Wire.beginTransmission(0x13); // transmit to device
-  Wire.write(0x05);        // Slave blink command
+  Wire.beginTransmission(slaveAddr); // transmit to device
+  Wire.write(0x21);        // Slave blink command
   Wire.write(255);        // blink for how much times
   Wire.endTransmission();    // stop transmitting
-  delay(3000);
+  delay(1000);
+
+  Wire.requestFrom(slaveAddr,1);
+  delay(500);
+
+  while(Wire.available()) {
+    byte hb = Wire.read();
+    Serial.println(hb);
+  }
+
+
+/*
+  Blink(2);                // Arduino Master Blink
+  Wire.beginTransmission(slaveAddr); // transmit to device
+  Wire.write(0x21);        // Slave blink command
+  Wire.write(0);        // blink for how much times
+  Wire.endTransmission();    // stop transmitting
+  delay(1000);
+  
+  Wire.beginTransmission(slaveAddr); // transmit to device
+  Wire.write(0x22);        // Slave blink command
+  Wire.write(255);        // blink for how much times
+  Wire.endTransmission();    // stop transmitting
+  delay(1000);
 
 
 
   Blink(2);                // Arduino Master Blink
-  Wire.beginTransmission(0x13); // transmit to device
-  Wire.write(0x05);        // Slave blink command
+  Wire.beginTransmission(slaveAddr); // transmit to device
+  Wire.write(0x22);        // Slave blink command
   Wire.write(0);        // blink for how much times
   Wire.endTransmission();    // stop transmitting
-  delay(3000);
-  
-  
+  delay(1000);
+  */
 }
 
 void Blink(byte times){ 
