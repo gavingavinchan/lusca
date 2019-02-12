@@ -8,9 +8,13 @@ const maxStepPerInterval = maxAccelerationPerSecond * (timeInterval/1000);
 
 
 var i2cThrusterWrite = function(device, _currentSpeed) {
-  device.writeBytes(0x00, [_currentSpeed*32767 >>> 8, (_currentSpeed*32767)%255], function(err) {
+  var speed = parseInt(_currentSpeed * 32767);
+  var hb = (speed >>> 8) & 0xFF;
+  var lb = speed % 255;
+  device.writeBytes(0x00, [hb, lb], function(err) {
     if (err){
-      console.log("error in thruster: ", err);
+      console.log(device.address);
+      console.log("error in thruster: " + speed + "\t" + hb + "\t" + lb);
     }
   });
 }
@@ -25,7 +29,7 @@ module.exports = function(setting){
   thruster.started = false;
 
   const device = new i2c(thruster.setting.address, {device: '/dev/i2c-1'});
-  //console.log(thruster.setting);
+  console.log(thruster.setting);
   var currentSpeed = 0,
     targetSpeed= 0,
     invert= thruster.setting.invert ? -1 : 1;

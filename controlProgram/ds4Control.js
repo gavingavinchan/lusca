@@ -6,7 +6,7 @@ var socket = io.connect('http://localhost:80');
 
 //THIS USES EDITED node-gamepad!!!
 var GamePad = require("node-gamepad");
-var controller = new GamePad("ps4/dualshock4_analog");
+var controller = new GamePad("ps4/dualshock4");
 
 controller.connect();
 

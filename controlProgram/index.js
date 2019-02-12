@@ -41,35 +41,29 @@ http.listen(80, function() {
 //asdasd
 var thrustProfile = require("./thrustProfile6T.js");
 
-var servoControl = require("./servoControl.js");
+// var servoControl = require("./servoControl.js");
 //servoControl.init(0x17);
 
-const EMControl = require("./EMControl.js");
-const EM1 = new EMControl({name: 'EM1', address: 0x14});
-const EM2 = new EMControl({name: 'EM2', address: 0x16});
+//const EMControl = require("./EMControl.js");
+//const EM1 = new EMControl({name: 'EM1', address: 0x14});
+//const EM2 = new EMControl({name: 'EM2', address: 0x16});
 
-var DTMFencoder = require("./DTMFencoderControl.js");
+//var DTMFencoder = require("./DTMFencoderControl.js");
 //DTMFencoder.init(0x20);
 //asdsa
 
 
 var ds4Control = require("./ds4Control.js");
 
-
-
-
-var ms5803 = require('ms5803');
-var sensor = new ms5803();
-
 //io.emit('DTMFpin', DTMFpin);
 
 
 //TODO fix too many listener problem
 var statusDisplay = require("./statusDisplayNEW.js");
-//statusDisplay.init();
+statusDisplay.init();
 
-var pinger = require("./pinger.js");
-pinger.init(0x70);
+//var pinger = require("./pinger.js");
+//pinger.init(0x70);
 
 var status = {
   gamepad: {
@@ -111,44 +105,3 @@ var status = {
 exports.getStatus = function() {
   return status;
 }
-
-
-//delay
-function delay(ms){
-  return new Promise( (resolve, reject) => {
-      setTimeout( () => {
-        resolve();
-      }, ms);
-  });
-}
-
-
-//depth sensor
-sensor.reset(function(err) {
-  if (err) {
-    status.message = err;
-    return;
-  }
-	sensor.begin(function(err, coefficient){
-
-		setInterval( function(){
-			sensor.measure(function(err, result){
-        if(err) return;
-        try{
-	  if(result.temperature>50){ // likely a bug
-		status.message = 'problem from sensor: temp: '+result.temperature;
-		return;
-          }
-          status.depth.raw = result.pressure;
-          status.depth.mBar = result.pressure - status.depth.zero;   //mBar, not tared
-        //console.log(result);
-          status.depth.cm = ((result.pressure - status.depth.zero)*100*100)/(1000*9.81); //cm, not tared
-
-          status.depth.cmTared = ((result.pressure - status.depth.tare)*100*100)/(1000*9.81); //cm, tared
-        }catch(exception){
-          status.message = 'exception from depth sensor';
-        }
-			});
-		}, 1000);
-	});
-});

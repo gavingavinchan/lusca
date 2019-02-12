@@ -2,13 +2,9 @@
 var i2c = require('i2c');
 
 var io = require('socket.io-client');
+var socket = io.connect('http://localhost:80');
 
-/*
-var EMController = {};
-exports.init = function(EMControllerAddr) {
-  EMController.device = new i2c(EMControllerAddr, {device: '/dev/i2c-1'});
-}
-*/
+
 module.exports = function(_settings){
   var EM = function() {};
 
@@ -17,16 +13,21 @@ module.exports = function(_settings){
 
   const i2cdevice = new i2c(EM.setting.address, {device: '/dev/i2c-1'});
 
-  //variable attraction strength
-  EM.attract = function(strength) {
-    i2cdevice.writeBytes(0x05, [strength], function(err) {
-      console.error(err);
-    });
-  }
 
+  //variable attraction strength
   EM.socket.on(EM.setting.name, function(value) {
-    EM.attract(value.strength);
+    let name = EM.setting.name;
+    if(name.indexOf("left")) {
+      i2cdevice.writeBytes(0x21, [strength], function(err) {
+      console.error(err);
+    } else if(name.indexOf('right') {
+      i2cdevice.writeBytes(0x22, [strength], function(err) {
+      console.error(err);
+    } else {
+      console.log('EM error, so left or right?');
   })
 
   return EM;
 }
+
+

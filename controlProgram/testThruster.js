@@ -6,10 +6,10 @@ addrs = [0x31, 0x32, 0x33, 0x30, 0x3A, 0x3B]//, 0x31]//, 0x31, 0x3A, 0x3B]//, 0x
 
 thrusters = [];
 for(var a of addrs){
-	thrusters.push(new i2c(a, {device:'/dev/i2c-3'}));
+	thrusters.push(new i2c(a, {device:'/dev/i2c-1'}));
 }
 
-voltage = new i2c(0x70, {device: '/dev/i2c-3'});
+voltage = new i2c(0x70, {device: '/dev/i2c-1'});
 
 async function writeThruster(t, speed){
 	return new Promise((resolve, reject)=>{
@@ -47,26 +47,44 @@ async function readVoltage(){
 		});
 	});
 }
-var terror = 0, perror = 0;
-interval(async(i) => {
-	try{
-		var begin = us.now();
-		let tasks = [];
-		if (i<5)
-			await writeThrusters(0);
-		else
-			await writeThrusters( (i * 50));
-	}catch(err){
-		terror ++;
+
+function syncWait(millis){
+	return new Promise( (resolve, reject) => {
+		setTimeout( ()=> { resolve(); }, millis);
+	});
+}
+
+async function thrust(speed, time){
+	var error = 0;
+	console.log("thrust: " + speed);
+	for (var i =0; i< parseInt(time / 50); i++){
+		try{
+		await writeThrusters(speed);
+		}catch(err){
+			error++;
+		}
+		await syncWait(50);
 	}
-	try{
-		await readVoltage();
-	}catch(err){
-		perror ++;	
-	}
-	let total_time = (us.now() - begin)/1000;
-	console.log("iteration: " + i + "\t time: " + total_time + " ms, error: " + terror + "\t" + perror);
-}, 75, { iterations: 300 });
+	console.log("total error: " + error);
+}
+/*
+var thrusterSpeed =0;
+async function gradualThrust(targetSpeed,accel) {
+	while(speed 
+*/
+// Main test logics
+async function test(){
+	await thrust(0, 1000);
+	await thrust(-15000, 3000);
+	await thrust(0, 200);
+	await thrust(15000, 3000);
+	await thrust(0, 1000);
+}
+
+test();
+
+
+
 
 /*
 interval(async() => {
