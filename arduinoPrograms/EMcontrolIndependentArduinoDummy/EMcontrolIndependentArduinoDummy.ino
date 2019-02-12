@@ -84,7 +84,7 @@ void executeCommand() {
 
 
 void requestEvent() {
-  //TinyWireS.send(i2cRegs[regPosition]);
+  Wire.write(i2cRegs[regPosition]);
   //TinyWireS.send(regPosition);
   regPosition++;
   if(regPosition >= regSize) {
@@ -119,11 +119,14 @@ void receiveEvent(byte numBytes) {
 
   while(numBytes--) {
     i2cRegs[regPosition] = Wire.read();
-    
+
+    /*
+     * cannot read more than one byte from master, otherwise will need 2d array
     regPosition++;
     if(regPosition >= regSize) {
       regPosition =0;
     }
+    */
   }
 }
 

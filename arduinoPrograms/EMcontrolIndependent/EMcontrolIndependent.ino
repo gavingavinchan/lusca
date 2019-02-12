@@ -1,3 +1,29 @@
+/* Digispark program for controlling electromagnets(EM) independently
+ *  
+ * followed example from https://github.com/rambo/TinyWire/blob/rollback/TinyWireS/examples/attiny85_i2c_slave_task/attiny85_i2c_slave_task.ino
+ * 
+ * To turn on Left EM, pin 1
+ *    Master send 0x21, then send strength value 0~255 (0=no attraction, 255=max attraction)
+ *  
+ * To turn on Right EM, pin 3
+ *    Master send 0x22, then send strength value 0~255 (0=no attraction, 255=max attraction)
+ * 
+ * 
+ * To blink LED, pin 1
+ *    Master send 0x10, then send number of times to blink
+ *    
+ * To Ping and request voltage on pin 3
+ *    Master send 0x99, then read high byte, then read low byte
+ *    
+ * To change I2C Address    
+ *    Master send 0xCE, then send new address 
+ *    
+ *    
+ * Note: the way this code is written does not allow slave to read more than two bytes from master(register and value)
+ *       may need i2cRegs[] to be 2D array
+ */
+
+
 #include "TinyWireS.h"                  // wrapper class for I2C slave routines
 #include <EEPROM.h>
 
@@ -6,7 +32,7 @@
 #define ledPin 1
 #define leftEM 1
 #define rightEM 3
-#define VDpin 4     //voltage divider pin
+#define VDpin 2     //voltage divider pin, P4
 
 const byte regSize = 210;       //0xce = 206 so 210 for some redundace
 volatile byte i2cRegs[int(regSize)];
@@ -28,7 +54,6 @@ void Blink(byte times){
 byte rp =0;
 void executeCommand() {
   byte rp = regPosition;
-  
   if(rp == 0x21) {
     analogWrite(leftEM, i2cRegs[rp]);
   } else if(rp == 0x22) {
@@ -36,11 +61,9 @@ void executeCommand() {
   } else if(rp == 0x10) {
     Blink(i2cRegs[rp]);
   } else if(rp == 0x99) {
-    //long raw = analogRead(VDpin);
-    //Blink(1);
-    long raw = 985;
-    i2cRegs[rp] = (raw >> 8) & 0xFF;   //high byte
-    i2cRegs[rp+1] = raw & 0xFF;        //low byte     hahaha low B
+    long raw = analogRead(VDpin);
+    i2cRegs[rp] = raw >> 8;             //high byte
+    i2cRegs[rp+1] = raw & 0xFF;         //low byte     hahaha low B
   } else if(rp == 0xCE) {
     EEPROM.put(0, i2cRegs[rp]);                //change address value
     Blink(1000);    
@@ -115,10 +138,13 @@ void receiveEvent(byte numBytes) {
   while(numBytes--) {
     i2cRegs[regPosition] = TinyWireS.receive();
     
+   /*
+     * cannot read more than one byte from master, otherwise will need 2d array
     regPosition++;
     if(regPosition >= regSize) {
       regPosition =0;
     }
+    */
   }
 }
 
