@@ -34,8 +34,14 @@ var status = {
     fineCoarse: true,
   },
   manipulator: {
-    EM1: false,
-    EM2: false,
+    EM1: {
+      left: 0,
+      right: 0,
+    },
+    EM2: {
+      left: 0,
+      right: 0,
+    },
     DTMFencoder: 0    //0: not playing, 1: playing
   },
   depth: {
@@ -112,29 +118,30 @@ controller.on("x:press", function() {
 //electromagnet
 controller.on("l1:press", function(){
   let _strength = 0;
-  if(status.manipulator.EM1) {
-    status.manipulator.EM1 = false;
+  if(status.manipulator.EM1.left) {
+    status.manipulator.EM1.left = false;
     _strength = 0;
   } else {
-    status.manipulator.EM1 = true;
+    status.manipulator.EM1.left = true;
     _strength = 255;
   }
 
-  socket.emit('EM1', {strength: _strength, boolean: status.manipulator.EM1});
+  socket.emit('EM1', {strength: _strength, side: "left", booleanLeft: status.manipulator.EM1.left});
 })
+
 
 
 controller.on("r1:press", function(){
   let _strength = 0;
-  if(status.manipulator.EM2) {
-    status.manipulator.EM2 = false;
+  if(status.manipulator.EM1.right) {
+    status.manipulator.EM1.right = false;
     _strength = 0;
   } else {
-    status.manipulator.EM2 = true;
+    status.manipulator.EM1.right = true;
     _strength = 255;
   }
 
-  socket.emit('EM2', {strength: _strength, boolean: status.manipulator.EM2});
+  socket.emit('EM1', {strength: _strength, side: "right", booleanRight: status.manipulator.EM1.right});
 })
 
 
@@ -176,14 +183,14 @@ controller.on("dpadLeft:press", function() {
 
 controller.on("dpadDown:press", function() {
   let _micros = 1500;
-  if(status.video.ch2) {
+  if(status.video.ch3) {
     //servoControl.servo(0x02,1500);
     _micros = 1500;
-    status.video.ch2 = false;
+    status.video.ch3 = false;
   } else {
     //servoControl.servo(0x02,1100);
     _micros = 1100;
-    status.video.ch2 = true;
+    status.video.ch3 = true;
   }
 
   socket.emit('servo', {command:0x13, micros: _micros});
@@ -191,8 +198,10 @@ controller.on("dpadDown:press", function() {
   socket.emit('CAM.ch3', status.video.ch3);
 })
 
-/*
+
+
+
 setInterval(function() {
   socket.emit('Ping');
 },50);
-*/
+

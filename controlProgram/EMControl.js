@@ -15,17 +15,17 @@ module.exports = function(_settings){
 
 
   //variable attraction strength
-  EM.socket.on(EM.setting.name, function(value) {
-    let name = EM.setting.name;
-    if(name.indexOf("left")) {
-      i2cdevice.writeBytes(0x21, [strength], function(err) {
-      console.error(err);
-    } else if(name.indexOf('right') {
-      i2cdevice.writeBytes(0x22, [strength], function(err) {
-      console.error(err);
+  socket.on(EM.setting.name, function(_EM) {
+    console.log("EM1");
+    if(_EM.side == "left") {
+      console.log("EM1: " + _EM.strength);
+      i2cdevice.writeBytes(0x21, [_EM.strength], function(err) { console.error(err);});
+    } else if(_EM.side == "right") {
+      i2cdevice.writeBytes(0x22, [_EM.strength], function(err) {console.error(err);});
     } else {
-      console.log('EM error, so left or right?');
-  })
+      console.log('EMContorl.js: EM error, so left or right?');
+    }
+  });
 
   return EM;
 }

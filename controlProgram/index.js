@@ -41,12 +41,12 @@ http.listen(80, function() {
 //asdasd
 var thrustProfile = require("./thrustProfile6T.js");
 
-// var servoControl = require("./servoControl.js");
+//var servoControl = require("./servoControl.js");
 //servoControl.init(0x17);
 
-//const EMControl = require("./EMControl.js");
-//const EM1 = new EMControl({name: 'EM1', address: 0x14});
-//const EM2 = new EMControl({name: 'EM2', address: 0x16});
+const EMControl = require("./EMControl.js");
+const EM1 = new EMControl({name: 'EM1', address: 0x14});
+const EM2 = new EMControl({name: 'EM2', address: 0x16});
 
 //var DTMFencoder = require("./DTMFencoderControl.js");
 //DTMFencoder.init(0x20);
@@ -62,8 +62,8 @@ var ds4Control = require("./ds4Control.js");
 var statusDisplay = require("./statusDisplayNEW.js");
 statusDisplay.init();
 
-//var pinger = require("./pinger.js");
-//pinger.init(0x70);
+var pinger = require("./pinger.js");
+pinger.init(0x14);
 
 var status = {
   gamepad: {

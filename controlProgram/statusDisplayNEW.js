@@ -28,8 +28,14 @@ var status = {
     direction: 1,
   },
   manipulator: {
-    EM1: false,
-    EM2: false,
+    EM1: {
+      left: false,
+      right: false,
+    },
+    EM2: {
+      left: false,
+      right: false,
+    },
     DTMFencoder: 0    //0: not playing, 1: playing
   },
   depth: {
@@ -42,7 +48,8 @@ var status = {
   },
   video: {
     ch1: true,
-    ch2: true
+    ch2: true,
+    ch3: true,
   },
   pinger: {
     pinVoltage: 0,
@@ -105,6 +112,7 @@ socket.on('thruster.thrust.VR', function(_thrust) {
 });
 
 
+
 socket.on('profile.direction', function(_direction) {
   status.thrust.direction = _direction;
 });
@@ -114,6 +122,7 @@ socket.on('profile.fineCoarse', function(_fineCoarse) {
 });
 
 
+
 socket.on('CAM.ch1', function(_channel) {
   status.video.ch1 = _channel;
 })
@@ -121,6 +130,18 @@ socket.on('CAM.ch1', function(_channel) {
 socket.on('CAM.ch2', function(_channel) {
   status.video.ch2 = _channel;
 })
+
+socket.on('CAM.ch3', function(_channel) {
+  status.video.ch3 = _channel;
+})
+
+
+
+socket.on('EM1', function(_EM1) {
+  status.manipulator.EM1.left = _EM1.booleanLeft;
+  status.manipulator.EM1.right = _EM1.booleanRight;
+});
+
 
 socket.on('pingerInputVoltage', function(_inputVoltage) {
   status.pinger.inputVoltage = _inputVoltage;
@@ -204,13 +225,20 @@ function draw() {
 
   booleanLine(outputBuffer, "Direction: ", 11, status.thrust.direction, "Front", "Rear");
 
-  booleanLine(outputBuffer, "fineCoarse: ", 12, status.thrust.fineCoarse, "Fine", "Coarse");
+  booleanLine(outputBuffer, "fineCoarse: ", 12, status.thrust.fineCoarse, "Coarse", "Fine");
 
 
   booleanLine(outputBuffer, "Video Channel 1: : ", 17, status.video.ch1, "CAM 1", "CAM 2");
 
   booleanLine(outputBuffer, "Video Channel 2: : ", 17, status.video.ch2, "CAM 3", "CAM 4");
 
+  booleanLine(outputBuffer, "Video Channel 3: : ", 17, status.video.ch3, "CAM 5", "CAM 6");
+
+  var blankLine = new Line(outputBuffer).fill().store();
+
+
+  booleanLine(outputBuffer, "EM1.left: ", 11, status.manipulator.EM1.left, "ON", "OFF");
+  booleanLine(outputBuffer, "EM1.right: ", 11, status.manipulator.EM1.right, "ON", "OFF");
 
   var blankLine = new Line(outputBuffer).fill().store();
 

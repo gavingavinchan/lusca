@@ -13,8 +13,8 @@ var i2cThrusterWrite = function(device, _currentSpeed) {
   var lb = speed % 255;
   device.writeBytes(0x00, [hb, lb], function(err) {
     if (err){
-      console.log(device.address);
-      console.log("error in thruster: " + speed + "\t" + hb + "\t" + lb);
+      //console.log(device.address);
+      //console.log("error in thruster: " + speed + "\t" + hb + "\t" + lb);
     }
   });
 }
