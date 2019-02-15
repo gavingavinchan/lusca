@@ -16,10 +16,12 @@ module.exports = function(_settings){
 
   //variable attraction strength
   socket.on(EM.setting.name, function(_EM) {
-    console.log("EM1");
+    //console.log("EM1");
     if(_EM.side == "left") {
-      console.log("EM1: " + _EM.strength);
-      i2cdevice.writeBytes(0x21, [_EM.strength], function(err) { console.error(err);});
+      //console.log("EM1: " + _EM.strength);
+      i2cdevice.writeBytes(0x21, [_EM.strength], function(err) {
+        socket.emit('miscError', err);
+      });
     } else if(_EM.side == "right") {
       i2cdevice.writeBytes(0x22, [_EM.strength], function(err) {console.error(err);});
     } else {

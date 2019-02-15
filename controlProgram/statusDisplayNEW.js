@@ -1,4 +1,4 @@
-var io = require('socket.io-client');
+var io = require('socket.io-client'); 
 var socket = io.connect('http://localhost:80');
 
 
@@ -26,6 +26,7 @@ var status = {
     VR: 0,
     fineCoarse: true,
     direction: 1,
+    error: []
   },
   manipulator: {
     EM1: {
@@ -53,9 +54,14 @@ var status = {
   },
   pinger: {
     pinVoltage: 0,
-    inputVoltage: 0
+    sourceVoltage: 0,
+    error: []
   },
-  message: []
+  misc: {
+    error: []
+  },
+  message: [],
+  initiationTime: (new Date()).getTime()
 };
 
 socket.on('drive', function(value) {
@@ -78,11 +84,11 @@ socket.on('tilt', function(value) {
   status.gamepad.tilt = value;
 });
 
-
+/*
 socket.on('thrusterTarget.HRR', function(_thrust) {
   status.profile.HRR = _thrust;
 });
-
+*/
 
 
 socket.on('thruster.thrust.HFL', function(_thrust) {
@@ -143,9 +149,27 @@ socket.on('EM1', function(_EM1) {
 });
 
 
-socket.on('pingerInputVoltage', function(_inputVoltage) {
-  status.pinger.inputVoltage = _inputVoltage;
+socket.on('pingerSourceVoltage', function(_sourceVoltage) {
+  status.pinger.sourceVoltage = _sourceVoltage;
 })
+
+
+socket.on('initiationTime', function(_time) {
+  status.initiationTime = _time;
+})
+
+socket.on('pingerError', function(_error) {
+  status.pinger.error = _error;
+})
+
+socket.on('thrustError', function(_error) {
+  status.thrust.error = _error;
+})
+
+socket.on('miscError', function(_error) {
+  status.misc.error = _error;
+})
+
 
 
 var CLI         = require('clui'),
@@ -204,7 +228,7 @@ function draw() {
 
   var blankLine = new Line(outputBuffer).fill().store();
 
-  gaugeLine(outputBuffer, "Thruster profile HRR", status.profile.HRR);
+  //gaugeLine(outputBuffer, "Thruster profile HRR", status.profile.HRR);
 
   var blankLine = new Line(outputBuffer).fill().store();
 
@@ -222,10 +246,17 @@ function draw() {
 
 
 
+  var blankLine = new Line(outputBuffer).fill().store();
+
+  var blankLine = new Line(outputBuffer).fill().store();
+
+
 
   booleanLine(outputBuffer, "Direction: ", 11, status.thrust.direction, "Front", "Rear");
 
   booleanLine(outputBuffer, "fineCoarse: ", 12, status.thrust.fineCoarse, "Coarse", "Fine");
+
+  var blankLine = new Line(outputBuffer).fill().store();
 
 
   booleanLine(outputBuffer, "Video Channel 1: : ", 17, status.video.ch1, "CAM 1", "CAM 2");
@@ -233,6 +264,7 @@ function draw() {
   booleanLine(outputBuffer, "Video Channel 2: : ", 17, status.video.ch2, "CAM 3", "CAM 4");
 
   booleanLine(outputBuffer, "Video Channel 3: : ", 17, status.video.ch3, "CAM 5", "CAM 6");
+
 
   var blankLine = new Line(outputBuffer).fill().store();
 
@@ -247,9 +279,44 @@ function draw() {
 
   new Line(outputBuffer)
     .column("voltage", 13)
-    .column(Gauge(status.pinger.inputVoltage, 12, 40, 12, status.pinger.inputVoltage.toFixed(3)),80)
+    .column(Gauge(status.pinger.sourceVoltage, 12, 40, 12, status.pinger.sourceVoltage.toFixed(3)),80)
     .fill()
     .store();
+
+
+//  var runTime = (new Date()).getTime().toString();// - status.initiationTime).toString();
+
+  var line = new Line(outputBuffer)
+    .column("Pinger Error: ", 15)
+    .column(status.pinger.error.toString(), 50)
+    .column(runTime(), 80)
+    .fill()
+    .store();
+
+
+  var blankLine = new Line(outputBuffer).fill().store();
+
+  var blankLine = new Line(outputBuffer).fill().store();
+
+
+  var line = new Line(outputBuffer)
+    .column("Thruster Error: ", 15)
+    .column(status.thrust.error.toString(), 80)
+    .column(runTime(),40)
+    .fill()
+    .store();
+
+
+  var blankLine = new Line(outputBuffer).fill().store();
+
+
+  var line = new Line(outputBuffer)
+    .column("Miscellaneou Error: ", 20)
+    .column(status.misc.error.toString(), 50)
+    .fill()
+    .store();
+
+
 
   clear();
   outputBuffer.output();
@@ -261,4 +328,19 @@ exports.init = function() {
   setInterval(function() {
     draw();
   },50);
+}
+
+
+function runTime() {
+  var currentTime = new Date();
+  var  _runTimeMillis = currentTime - status.initiationTime;
+  var m = new Date(_runTimeMillis);
+  var runTimeString =
+    m.getUTCFullYear() + "/" +
+    ("0" + (m.getUTCMonth()+1)).slice(-2) + "/" +
+    ("0" + m.getUTCDate()).slice(-2) + " " +
+    ("0" + m.getUTCHours()).slice(-2) + ":" +
+    ("0" + m.getUTCMinutes()).slice(-2) + ":" +
+    ("0" + m.getUTCSeconds()).slice(-2);
+  return runTimeString.toString();
 }

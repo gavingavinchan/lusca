@@ -1,5 +1,3 @@
-var DTMFpin = [0x06,0x01,0x03];
-
 //Initiation
 
 const thrusterControl = require("./thrusterControl.js");
@@ -38,7 +36,9 @@ io.on('connection', function(socket) {
 http.listen(80, function() {
   console.log('listening on *:80 ');
 });
-//asdasd
+
+
+
 var thrustProfile = require("./thrustProfile6T.js");
 
 //var servoControl = require("./servoControl.js");
@@ -48,22 +48,24 @@ const EMControl = require("./EMControl.js");
 const EM1 = new EMControl({name: 'EM1', address: 0x14});
 const EM2 = new EMControl({name: 'EM2', address: 0x16});
 
-//var DTMFencoder = require("./DTMFencoderControl.js");
-//DTMFencoder.init(0x20);
-//asdsa
-
 
 var ds4Control = require("./ds4Control.js");
-
-//io.emit('DTMFpin', DTMFpin);
 
 
 //TODO fix too many listener problem
 var statusDisplay = require("./statusDisplayNEW.js");
 statusDisplay.init();
 
+
 var pinger = require("./pinger.js");
 pinger.init(0x14);
+
+
+//Program initiation time
+io.emit('initiationTime', new Date(Date. UTC(0,0,0,0,0,0)));
+
+
+
 
 var status = {
   gamepad: {

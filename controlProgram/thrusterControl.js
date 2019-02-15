@@ -1,6 +1,6 @@
 var i2c = require('i2c');
 var io = require('socket.io-client');
-
+var socket = io.connect('http://localhost:80');
 
 const timeInterval = 50;
 const maxAccelerationPerSecond = 0.5;
@@ -13,6 +13,8 @@ var i2cThrusterWrite = function(device, _currentSpeed) {
   var lb = speed % 255;
   device.writeBytes(0x00, [hb, lb], function(err) {
     if (err){
+      var errorMessage = "  0x" +  device.address.toString(16) + ":  error in thruster: " + speed + "\t" + hb + "\t" + lb;
+      socket.emit('thrustError',errorMessage);
       //console.log(device.address);
       //console.log("error in thruster: " + speed + "\t" + hb + "\t" + lb);
     }
