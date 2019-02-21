@@ -2,32 +2,28 @@
 #include <TinyWireS.h>
 
 #define BUFFER_SIZE 16
+#define ledPin 1
 
 //const byte regSize = 210;
 //volatile byte i2cRegs[int(regSize)];
 volatile byte command = 0;
 
 bool execute = false;
-
-void setup() {
-  volatile byte SLAVE_ADDR = 0;
-  SLAVE_ADDR = EEPROM.read(0);
-  if(SLAVE_ADDR > 127 || SLAVE_ADDR < 1) {
-    SLAVE_ADDR = 100;
-  }
-
-  TinyWireS.begin(SLAVE_ADDR);
-
-  TinyWireS.onReceive(receiveEvent);
-  TinyWireS.onRequest(requestEvent);
-
-  pinMode(4, INPUT);
-  pinMode(3, INPUT);
-  }
-
+byte NEW_SLAVE_ADDR = 0; 
 byte cmd = 0;
+
 byte pHByte[2] = {0, 0};
 byte TempByte[2] = {0, 0};
+
+void Blink(byte times){ 
+  for (byte i=0; i< times; i++){
+    digitalWrite(ledPin,HIGH);
+    tws_delay(175);
+    digitalWrite(ledPin,LOW);
+    tws_delay(175);
+  }
+}
+
 void executeCommand() {
   byte cmd = command;
   if(cmd == 0x67) {
@@ -54,17 +50,11 @@ void executeCommand() {
   } else if(cmd == 0xCE) {
     EEPROM.put(0, NEW_SLAVE_ADDR);
     delay(1000);
-    }
+    Blink(1000);
+  }
+
 }
 
-void loop() {
-  if(execute) {
-    executeCommand();
-    execute = false;
-    TinyWireS_stop_check();
-    }
-  }
-NEW_SLAVE_ADDR = 0; 
 void receiveEvent(byte numBytes) {
   if(numBytes < 1) {
     //sanity check
@@ -80,16 +70,20 @@ void receiveEvent(byte numBytes) {
 
   command = TinyWireS.receive();
 
-  if(command == 0x67) {
-    byte pHByte[2] = {0, 0};
+
+ /* while(numBytes--) {
+    if(command == 0x67) {
+    pHByte[2] = {0, 0};
   } else if(command == 0x68) {
-    byte TempByte[2] = {0, 0};
+    TempByte[2] = {0, 0};
   } else if(command == 0x69) {
-    byte pHByte[2] = {0, 0};
-    byte TempByte[2] = {0, 0};
+    pHByte[2] = {0, 0};
+    TempByte[2] = {0, 0};
   } else if(command == 0xCE) {
     NEW_SLAVE_ADDR = TinyWireS.receive();
     }
+ */
+}
   /*numBytes--;
   if(!numBytes) {
     //no bytes left
@@ -99,7 +93,6 @@ void receiveEvent(byte numBytes) {
     i2cRegs[regPosition] = TinyWireS.receive();
 }
 */
-}
 
 void requestEvent() {
   if(command == 0x67) {
@@ -109,6 +102,7 @@ void requestEvent() {
     TinyWireS.send(TempByte[0]);
     TinyWireS.send(TempByte[1]);
   } else if(command == 0x69) {
+    Blink(10);
     TinyWireS.send(pHByte[0]);
     TinyWireS.send(pHByte[1]);
     TinyWireS.send(TempByte[0]);
@@ -123,6 +117,31 @@ void requestEvent() {
     }
 
   */
+void setup() {
+  volatile byte SLAVE_ADDR = 0;
+  SLAVE_ADDR = EEPROM.read(0);
+  if(SLAVE_ADDR > 127 || SLAVE_ADDR < 1) {
+    SLAVE_ADDR = 100;
+  }
+
+  TinyWireS.begin(SLAVE_ADDR);
+
+  TinyWireS.onReceive(receiveEvent);
+  TinyWireS.onRequest(requestEvent);
+
+  pinMode(4, INPUT);
+  pinMode(3, INPUT);
+
+  pinMode(ledPin,OUTPUT);
+
+  }
+
+void loop() {
+  if(execute) {
+    executeCommand();
+    execute = false;
+    TinyWireS_stop_check();
+    }
   }
 
 

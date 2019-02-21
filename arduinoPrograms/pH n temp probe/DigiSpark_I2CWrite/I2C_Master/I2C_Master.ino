@@ -15,6 +15,11 @@ void setup()
 
 void loop()
 {
+  Wire.beginTransmission(SLAVE_ADDR);
+  byte command = 0x69;
+  Wire.write(command);
+  Wire.endTransmission();
+  
   Wire.requestFrom(SLAVE_ADDR,4);
   
   while(Wire.available()) {
@@ -34,6 +39,7 @@ void loop()
     Serial.println(TempValue_NoBit);
 
     delay(100);
-
+   
   }
+
 }
