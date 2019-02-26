@@ -117,8 +117,11 @@ void receiveEvent(byte numBytes) {
     return;
   }
 
+  int i = regPosition;
   while(numBytes--) {
-    i2cRegs[regPosition] = Wire.read();
+    i2cRegs[i] = Wire.read();
+
+    i++;
 
     /*
      * cannot read more than one byte from master, otherwise will need 2d array
@@ -136,7 +139,7 @@ void setup() {
   volatile byte I2C_SLAVE_ADDR = 0x15;
 
   Wire.begin(I2C_SLAVE_ADDR);      // init I2C Slave mode
-  Serial.begin(57600);
+  //Serial.begin(57600);
   Serial.println("start");
   
   Wire.onReceive(receiveEvent);

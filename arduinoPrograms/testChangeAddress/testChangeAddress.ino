@@ -4,9 +4,9 @@
 void setup() {
   Wire.begin();
 
-  Wire.beginTransmission(0x14);
+  Wire.beginTransmission(0x05);
   Wire.write(0xce);
-  Wire.write(0xff);
+  Wire.write(0x14);
   Wire.endTransmission();
 }
 

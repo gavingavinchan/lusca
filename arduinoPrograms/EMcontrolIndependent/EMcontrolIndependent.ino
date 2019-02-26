@@ -12,7 +12,7 @@
  * To blink LED, pin 1
  *    Master send 0x10, then send number of times to blink
  *    
- * To Ping and request voltage on pin 3
+ * To Ping and request voltage on pin 4
  *    Master send 0x99, then read high byte, then read low byte
  *    
  * To change I2C Address    
@@ -105,12 +105,23 @@ void executeCommand() {
 
 
 void requestEvent() {
+  if(regPosition == 0x90) {
+    TinyWireS.send(i2cRegs[regPosition]);
+    TinyWireS.send(i2cRegs[regPosition+1]);
+  } else if(regPosition == 0x99) {
+    TinyWireS.send(i2cRegs[regPosition]);
+    TinyWireS.send(i2cRegs[regPosition+1]);
+  }
+
+
+  /*
   TinyWireS.send(i2cRegs[regPosition]);
   //TinyWireS.send(regPosition);
   regPosition++;
   if(regPosition >= regSize) {
     regPosition =0;
   }
+  */
 }
 
 
@@ -135,8 +146,11 @@ void receiveEvent(byte numBytes) {
     return;
   }
 
+  
+  int i = regPosition;
   while(numBytes--) {
-    i2cRegs[regPosition] = TinyWireS.receive();
+    i2cRegs[i] = TinyWireS.receive();
+    i++;
     
    /*
      * cannot read more than one byte from master, otherwise will need 2d array
