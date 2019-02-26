@@ -203,5 +203,5 @@ controller.on("dpadDown:press", function() {
 
 setInterval(function() {
   socket.emit('Ping');
+  socket.emit('echo');
 },50);
-
