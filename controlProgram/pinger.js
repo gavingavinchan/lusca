@@ -14,8 +14,8 @@ exports.init = function(pingerAddr) {
 
   // measured values of actual resistors
   if(pingerAddr == 0x14) {
-    resistor1 = 1000;
-    resistor2 = 100;
+    resistor1 = 1001;
+    resistor2 = 100.2;
   }
 }
 

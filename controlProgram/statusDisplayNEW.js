@@ -310,7 +310,7 @@ function draw() {
 
   new Line(outputBuffer)
     .column("Voltage", 13)
-    .column(Gauge(status.pinger.sourceVoltage, 12, 40, 12, status.pinger.sourceVoltage.toFixed(3)),80)
+    .column(Gauge(status.pinger.sourceVoltage, 16, 40, 16, status.pinger.sourceVoltage.toFixed(3)),80)
     .fill()
     .store();
 
@@ -334,7 +334,7 @@ function draw() {
     .column(status.pinger.error[0].toString(), 80)
     .fill()
     .store();
-
+/*
   var blankLine = new Line(outputBuffer).fill().store();
 
   var blankLine = new Line(outputBuffer).fill().store();
@@ -357,7 +357,7 @@ function draw() {
     .column(status.echoer.error[0].toString(), 80)
     .fill()
     .store();
-
+*/
   var blankLine = new Line(outputBuffer).fill().store();
 
   var blankLine = new Line(outputBuffer).fill().store();
