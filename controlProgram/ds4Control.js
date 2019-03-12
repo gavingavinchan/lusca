@@ -4,7 +4,7 @@ var socket = io.connect('http://localhost:80');
 
 var HID = require('node-hid');
 var devices = HID.devices();
-console.log(devices);
+//console.log(devices);
 
 //THIS USES EDITED node-gamepad!!!
 var GamePad = require("node-gamepad");

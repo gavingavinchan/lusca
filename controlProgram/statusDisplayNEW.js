@@ -166,7 +166,7 @@ socket.on('initiationTime', function(_time) {
 })
 
 
-var pingerErrorArrMax = 2;    //stores how many error messages +1
+var pingerErrorArrMax = 1;    //stores how many error messages +1
 var pingerErrorNum = 0;
 socket.on('pingerError', function(_error) {
   pingerErrorNum++;
@@ -175,7 +175,7 @@ socket.on('pingerError', function(_error) {
 })
 
 
-var echoerErrorArrMax = 2;    //stores how many error messages +1
+var echoerErrorArrMax = 1;    //stores how many error messages +1
 var echoerErrorNum = 0;
 socket.on('echoerError', function(_error) {
   echoerErrorNum++;
@@ -317,11 +317,6 @@ function draw() {
 
 //  var runTime = (new Date()).getTime().toString();// - status.initiationTime).toString();
 
-  var line = new Line(outputBuffer)
-    .column("Pinger Error: ", 15)
-    .column(status.pinger.error[2].toString(), 80)
-    .fill()
-    .store();
 
   var line = new Line(outputBuffer)
     .column("Pinger Error: ", 15)
@@ -334,15 +329,13 @@ function draw() {
     .column(status.pinger.error[0].toString(), 80)
     .fill()
     .store();
-/*
-  var blankLine = new Line(outputBuffer).fill().store();
+
 
   var blankLine = new Line(outputBuffer).fill().store();
-
 
   var line = new Line(outputBuffer)
-    .column("Echoer Error: ", 15)
-    .column(status.echoer.error[2].toString(), 80)
+    .column("Echoer RoundTrip Time: ", 23)
+    .column(status.echoer.roundTime.toString(), 80)
     .fill()
     .store();
 
@@ -357,7 +350,7 @@ function draw() {
     .column(status.echoer.error[0].toString(), 80)
     .fill()
     .store();
-*/
+
   var blankLine = new Line(outputBuffer).fill().store();
 
   var blankLine = new Line(outputBuffer).fill().store();

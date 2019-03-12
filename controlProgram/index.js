@@ -60,8 +60,8 @@ statusDisplay.init();
 var pinger = require("./pinger.js");
 pinger.init(0x14);
 
-//var echoer = require('./echo.js');
-//echoer.init(0x14);
+var echoer = require('./echo.js');
+echoer.init(0x14);
 
 
 //Program initiation time

@@ -13,7 +13,7 @@ socket.on('echo', function() {
   echo();
 });
 
-
+/*
 function i2cWrite(_byte) {
   device.write([_byte], function(err) {
     if (err) {
@@ -37,17 +37,14 @@ function i2cread() {
     return res[0]
   });
 }
+*/
 
 
-
-var initiationTime = new Date();
-socket.on('initiationTime', function(_time) {
-  initiationTime = _time;
-})
-
-function runTimeMillis() {
+var lastSentTime = new Date();
+function roundTripTime() {
   var currentTime = new Date();
-  var  _runTimeMillis = currentTime - initiationTime;
+  var _runTimeMillis = currentTime - lastSentTime;
+  //console.log("runTimeMillis: " + _runTimeMillis);
   return _runTimeMillis;
 }
 
@@ -55,11 +52,11 @@ function runTimeMillis() {
 
 function echo() {
   //send time
-  var sendTime = runTimeMillis();
-  var hbSend = sendTime>>8 & 0xFF;
-  var lbSend = sendTime & 0xFF;
+  lastSentTime = new Date();
+  var hbSend = lastSentTime>>8 & 0xFF;
+  var lbSend = lastSentTime & 0xFF;
 
-  device.write([0x90,hbSend,lbSend], function(err) {
+  device.writeBytes(0x90,[hbSend,lbSend], function(err) {
     if (err) {
       var errorMessage = "error reading" + err;
       socket.emit('echoerError', errorMessage);
@@ -69,26 +66,33 @@ function echo() {
   });
 
 
-  //read hb
-  var hbReceive = i2cread();
-  console.log('hbReceive: ' + hbReceive)
-  var receiveTime = runTimeMillis();
+  var hbReceive = 0;
+  var lbReceive = 0;
+  device.read(2,function(err,res) {
+    if (err) {
+      var errorMessage = "error reading" + err;
+      socket.emit('echoerError', errorMessage);
+      //console.log("error reading" + err);
+      return;
+    }
+    hbReceive = res[0];
+    lbReceive = res[1];
+    //console.log('hbReceive: ' + hbReceive);
+    //console.log('lbReceive: ' + lbReceive);
+    var _roundTripTime = roundTripTime();
 
-  //read lb
-  var lbReceive = i2cread();
-  console.log('lbReceive: ' + lbReceive)
+    //determine if have error
+    if(hbSend != hbReceive) {
+      socket.emit('echoerError', "High byte received not same as sent");
+      return;
+    }
 
-  //determine if have error
-  if(hbSend != hbReceive) {
-    socket.emit('echoerError', "High byte received not same as sent");
-    return;
-  }
+    if(lbSend != lbReceive) {
+      socket.emit('echoerError', "Low byte received not same as sent");
+      return;
+    }
 
-  if(lbSend != lbReceive) {
-    socket.emit('echoerError', "Low byte received not same as sent");
-    return;
-  }
-
-  //calculate roundTime
-  socket.emit('echoerRoundTime', (receiveTime-sendTime).toString());
+    //calculate roundTime
+    socket.emit('echoerRoundTime', (_roundTripTime).toString());
+  });
 }
