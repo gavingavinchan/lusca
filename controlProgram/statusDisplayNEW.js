@@ -1,4 +1,4 @@
-var io = require('socket.io-client'); 
+var io = require('socket.io-client');
 var socket = io.connect('http://localhost:80');
 
 
@@ -26,7 +26,7 @@ var status = {
     VR: 0,
     fineCoarse: true,
     direction: 1,
-    error: []
+    error: ["null","null","null"]
   },
   manipulator: {
     EM1: {
@@ -55,13 +55,17 @@ var status = {
   pinger: {
     pinVoltage: 0,
     sourceVoltage: 0,
-    error: []
+    error: ["null","null","null"]
+  },
+  echoer: {
+    roundTime: 0,
+    error: ["null","null","null"]
   },
   misc: {
-    error: []
+    error: ["null","null","null"]
   },
   message: [],
-  initiationTime: (new Date()).getTime()
+  initiationTime: new Date()
 };
 
 socket.on('drive', function(value) {
@@ -153,21 +157,48 @@ socket.on('pingerSourceVoltage', function(_sourceVoltage) {
   status.pinger.sourceVoltage = _sourceVoltage;
 })
 
+socket.on('echoerRoundTime', function(_roundTime) {
+  status.echoer.roundTime = _roundTime;
+})
 
 socket.on('initiationTime', function(_time) {
   status.initiationTime = _time;
 })
 
+
+var pingerErrorArrMax = 1;    //stores how many error messages +1
+var pingerErrorNum = 0;
 socket.on('pingerError', function(_error) {
-  status.pinger.error = _error;
+  pingerErrorNum++;
+  status.pinger.error.shift();
+  status.pinger.error[pingerErrorArrMax] = _error + "\t" + runTime() + "   Num: " + pingerErrorNum;
 })
 
+
+var echoerErrorArrMax = 1;    //stores how many error messages +1
+var echoerErrorNum = 0;
+socket.on('echoerError', function(_error) {
+  echoerErrorNum++;
+  status.echoer.error.shift();
+  status.echoer.error[echoerErrorArrMax] = _error + "\t" + runTime() + "   Num: " + echoerErrorNum;
+})
+
+
+var thrustErrorArrMax = 2;    //stores how many error messages +1
+var thrustErrorNum = 0;
 socket.on('thrustError', function(_error) {
-  status.thrust.error = _error;
+  thrustErrorNum++;
+  status.thrust.error.shift();
+  status.thrust.error[thrustErrorArrMax] = _error + "\t" + runTime() + "   Num: " + thrustErrorNum;
 })
 
+
+var miscErrorArrMax = 2;    //stores how many error messages +1
+var miscErrorNum = 0;
 socket.on('miscError', function(_error) {
-  status.misc.error = _error;
+  miscErrorNum++;
+  status.misc.error.shift();
+  status.misc.error[miscErrorArrMax] = _error + "\t" + runTime() + "   Num: " + miscErrorNum;
 })
 
 
@@ -278,21 +309,47 @@ function draw() {
 
 
   new Line(outputBuffer)
-    .column("voltage", 13)
-    .column(Gauge(status.pinger.sourceVoltage, 12, 40, 12, status.pinger.sourceVoltage.toFixed(3)),80)
+    .column("Voltage", 13)
+    .column(Gauge(status.pinger.sourceVoltage, 16, 40, 16, status.pinger.sourceVoltage.toFixed(3)),80)
     .fill()
     .store();
 
 
 //  var runTime = (new Date()).getTime().toString();// - status.initiationTime).toString();
 
+
   var line = new Line(outputBuffer)
     .column("Pinger Error: ", 15)
-    .column(status.pinger.error.toString(), 50)
-    .column(runTime(), 80)
+    .column(status.pinger.error[1].toString(), 80)
     .fill()
     .store();
 
+  var line = new Line(outputBuffer)
+    .column("Pinger Error: ", 15)
+    .column(status.pinger.error[0].toString(), 80)
+    .fill()
+    .store();
+
+
+  var blankLine = new Line(outputBuffer).fill().store();
+
+  var line = new Line(outputBuffer)
+    .column("Echoer RoundTrip Time: ", 23)
+    .column(status.echoer.roundTime.toString(), 80)
+    .fill()
+    .store();
+
+  var line = new Line(outputBuffer)
+    .column("Echoer Error: ", 15)
+    .column(status.echoer.error[1].toString(), 80)
+    .fill()
+    .store();
+
+  var line = new Line(outputBuffer)
+    .column("Echoer Error: ", 15)
+    .column(status.echoer.error[0].toString(), 80)
+    .fill()
+    .store();
 
   var blankLine = new Line(outputBuffer).fill().store();
 
@@ -301,22 +358,58 @@ function draw() {
 
   var line = new Line(outputBuffer)
     .column("Thruster Error: ", 15)
-    .column(status.thrust.error.toString(), 80)
-    .column(runTime(),40)
+    .column(status.thrust.error[2].toString(), 80)
+    //.column(runTime(),40)
+    .fill()
+    .store();
+
+  var line = new Line(outputBuffer)
+    .column("Thruster Error: ", 15)
+    .column(status.thrust.error[1].toString(), 80)
+    //.column(runTime(),40)
+    .fill()
+    .store();
+
+  var line = new Line(outputBuffer)
+    .column("Thruster Error: ", 15)
+    .column(status.thrust.error[0].toString(), 80)
+    //.column(runTime(),40)
     .fill()
     .store();
 
 
   var blankLine = new Line(outputBuffer).fill().store();
+  var blankLine = new Line(outputBuffer).fill().store();
 
 
   var line = new Line(outputBuffer)
     .column("Miscellaneou Error: ", 20)
-    .column(status.misc.error.toString(), 50)
+    .column(status.misc.error[2].toString(), 80)
+    .fill()
+    .store();
+
+  var line = new Line(outputBuffer)
+    .column("Miscellaneou Error: ", 20)
+    .column(status.misc.error[1].toString(), 80)
     .fill()
     .store();
 
 
+  var line = new Line(outputBuffer)
+    .column("Miscellaneou Error: ", 20)
+    .column(status.misc.error[0].toString(), 80)
+    .fill()
+    .store();
+
+
+  var blankLine = new Line(outputBuffer).fill().store();
+  var blankLine = new Line(outputBuffer).fill().store();
+
+  var line = new Line(outputBuffer)
+    .column("RunTime: ", 64)
+    .column(runTime(), 50)
+    .fill()
+    .store();
 
   clear();
   outputBuffer.output();
@@ -336,11 +429,9 @@ function runTime() {
   var  _runTimeMillis = currentTime - status.initiationTime;
   var m = new Date(_runTimeMillis);
   var runTimeString =
-    m.getUTCFullYear() + "/" +
-    ("0" + (m.getUTCMonth()+1)).slice(-2) + "/" +
-    ("0" + m.getUTCDate()).slice(-2) + " " +
     ("0" + m.getUTCHours()).slice(-2) + ":" +
     ("0" + m.getUTCMinutes()).slice(-2) + ":" +
-    ("0" + m.getUTCSeconds()).slice(-2);
+    ("0" + m.getUTCSeconds()).slice(-2) + ":" +
+    ("00" + m.getTime()).slice(-3);
   return runTimeString.toString();
 }

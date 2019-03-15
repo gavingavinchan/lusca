@@ -1,9 +1,9 @@
 //Initiation
 
 const thrusterControl = require("./thrusterControl.js");
-const HFL = new thrusterControl({name:"HFL", address: 0x32, invert: true}),
-  HFR = new thrusterControl({name:"HFR", address: 0x31, invert: true}),
-  HRL = new thrusterControl({name:"HRL", address: 0x33, invert: false}),
+const HFL = new thrusterControl({name:"HFL", address: 0x31, invert: true}),
+  HFR = new thrusterControl({name:"HFR", address: 0x33, invert: true}),
+  HRL = new thrusterControl({name:"HRL", address: 0x32, invert: false}),
   HRR = new thrusterControl({name:"HRR", address: 0x30, invert: false}),
   VF = new thrusterControl({name:"VF", address: 0x3A, invert: false}),
   VR = new thrusterControl({name:"VR", address: 0x3B, invert: true});
@@ -41,8 +41,8 @@ http.listen(80, function() {
 
 var thrustProfile = require("./thrustProfile6T.js");
 
-//var servoControl = require("./servoControl.js");
-//servoControl.init(0x17);
+var servoControl = require("./servoControl.js");
+servoControl.init(0x17);
 
 const EMControl = require("./EMControl.js");
 const EM1 = new EMControl({name: 'EM1', address: 0x14});
@@ -59,6 +59,9 @@ statusDisplay.init();
 
 var pinger = require("./pinger.js");
 pinger.init(0x14);
+
+var echoer = require('./echo.js');
+echoer.init(0x14);
 
 
 //Program initiation time

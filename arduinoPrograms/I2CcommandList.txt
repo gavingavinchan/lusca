@@ -1,0 +1,17 @@
+0x00	thruster turn			write(0x00, highbyte, lowbyte)
+
+0x05	big LED light up, pin 1		(old, leviathan)
+
+0x10	blink, pin 1: 			write(0x10, numberOfTimesToBlink)
+
+0x11	Cam channel 1 switch, servo PWM	write(0x11, highbyte, lowbyte)
+0x12	Cam channel 2 switch, servo PWM	write(0x12, highbyte, lowbyte)
+0x13	Cam channel 3 switch, servo PWM	write(0x13, highbyte, lowbyte)
+
+0x21	EM left, P1			write(0x21, strength)
+0x22	EM right, P3			write(0x22, strength)
+
+0x90	Echo, repeats the bytes it recieves	write(0x90, highbyte, lowbyte)		read(highbyte, lowbyte)	technically can be any command, any number of bytes long as long the command is not the same as anyother commands
+0x99	read P4 voltage			write(0x99)			read(highbyte, lowbyte)
+
+0xCE	change I2C address			write(0xCE, newAddress)		needs to restart digispark

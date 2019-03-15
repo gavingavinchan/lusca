@@ -3,19 +3,19 @@ var i2c = require('i2c');
 var io = require('socket.io-client');
 var socket = io.connect('http://localhost:80');
 
-
+//default resistor values
 var resistor1 = 1000;  //resistor connected between 12V and the pin
 var resistor2 = 100;   //resistor connected between pin and GND
 
 
 exports.init = function(pingerAddr) {
   device = new i2c(pingerAddr, {device: '/dev/i2c-1'});
-  
+
 
   // measured values of actual resistors
   if(pingerAddr == 0x14) {
-    resistor1 = 1000;
-    resistor2 = 100;
+    resistor1 = 1001;
+    resistor2 = 100.2;
   }
 }
 
@@ -45,7 +45,19 @@ socket.on('Ping', function() {
 
 
 
-function ping(){
+function ping() {
+  device.readBytes(0x99, 2, function(err,res) {
+    if (err){
+      var errorMessage = "error reading" + err;
+      socket.emit('pingerError', errorMessage);
+      return;
+    }
+    pingResults[0] = res[0];
+    pingResults[1] = res[1];
+  })
+
+
+  /*
   device.write([0x99], function(err) {
     if (err){
       var errorMessage = "error reading" + err;
@@ -61,7 +73,7 @@ function ping(){
       socket.emit('pingerError', errorMessage);
       return;
     }
-    pingResults[0] = res[0]
+    pingResults[0] = res[0];
   });
 
 
@@ -74,7 +86,7 @@ function ping(){
     pingResults[1] = res[0];
   });
 
-
+*/
 }
 
 //setInterval(ping, 50);

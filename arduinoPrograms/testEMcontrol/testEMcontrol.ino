@@ -22,7 +22,7 @@ void setup() {
 
   Serial.println("blink 5 times");
   Wire.beginTransmission(slaveAddr);
-  Wire.write(0x10);
+  Wire.write(slaveAddr);
   Wire.write(5);
   Wire.endTransmission();
   delay(10);
@@ -39,12 +39,15 @@ void loop() {
     Wire.beginTransmission(slaveAddr); // transmit to device
     Wire.write(0x99);        // Slave blink command
     Wire.endTransmission();    // stop transmitting
-  
+
+    //delay(10);
+
+    //CHANGE TO REQUEST 2 BYTES!!!!
     Wire.requestFrom(slaveAddr,1);
   
     while(Wire.available()) {
       hb = Wire.read();
-      //Serial.print(hb);
+      Serial.print(hb);
       hbReceive = true;
     }
   
@@ -52,11 +55,11 @@ void loop() {
   
     while(Wire.available()) {
       lb = Wire.read();
-      //Serial.print(lb);
+      Serial.print(lb);
       lbReceive = true;
     }
-  
 
+    //delay(10);
   }
 
   if(hbReceive == true && lbReceive == true) { //
@@ -67,6 +70,45 @@ void loop() {
   } else {
     Serial.println("cannot Ping");
   }
+
+
+
+  byte echoHB = 0;
+  byte echoLB = 0;
+  bool echoHBReceive = false;
+  bool echoLBReceive = false;
+  for(int i=0;i<10;i++) {
+    Wire.beginTransmission(slaveAddr); // transmit to device
+    Wire.write(0x90);        // Slave blink command
+    Wire.write(0x05);
+    Wire.write(0x03);
+    Wire.endTransmission();    // stop transmitting
+
+    //delay(50);
+    Wire.requestFrom(slaveAddr,1);
+    while(Wire.available()) {
+      echoHB = Wire.read();
+      echoHBReceive = true;
+    }
+  
+    Wire.requestFrom(slaveAddr,1);
+    while(Wire.available()) {
+      echoLB = Wire.read();
+      echoLBReceive = true;
+    }
+  }
+  
+  if(echoHBReceive == true && echoLBReceive == true) { //
+    Serial.print("echo results: ");
+    Serial.print(echoHB);
+    Serial.println(echoLB);
+    echoHBReceive = false;
+    echoLBReceive = false;
+  } else {
+    Serial.println("cannot Echo");
+  }
+
+
 
 
   Blink(2);                // Arduino Master Blink

@@ -9,7 +9,9 @@ exports.init = function(CAMControllerAddr) {
 }
 
 var servo = function(command,servoMicros) {
-  CAMController.device.writeBytes(command, [servoMicros >>> 8, servoMicros%255], function(err) {});
+  CAMController.device.writeBytes(command, [servoMicros >>> 8, servoMicros%255], function(err) {
+    if(err) {socket.emit('miscError', "Servo," + command + "," + servoMicros + ": " + err);}
+  });
 }
 
 socket.on('servo', function(_servo) {
