@@ -1,6 +1,6 @@
 
 #include <Wire.h>
-#define SLAVE_ADDR 0x70
+#define SLAVE_ADDR 0x64
 
 long bitshift(byte byte1, byte byte2) {
   long Nobitshift = (byte1 << 8) | byte2;
@@ -42,7 +42,7 @@ void loop() {
   Serial.print(bitshift(pHByte[0], pHByte[1]));
 
   
-  
+ 
 
   Wire.beginTransmission(SLAVE_ADDR);
   byte command68 = 0x68;
@@ -59,7 +59,6 @@ void loop() {
   }
   Serial.print("\t 0x68 Temp: ");
   Serial.print(bitshift(TempByte[0], TempByte[1]));
-
 
 
   Wire.beginTransmission(SLAVE_ADDR);
@@ -87,13 +86,13 @@ void loop() {
   Serial.print("\t");
   Serial.print(TempByte[1]);
   Serial.print("\t");
-  Serial.print(bitshift(TempByte[0], TempByte[1]));
+  Serial.println(bitshift(TempByte[0], TempByte[1]));
 
 
-
+/*
   Wire.beginTransmission(SLAVE_ADDR);
   Wire.write(0xCE);
-  Wire.write(0x70);
+  Wire.write(0x64);
   Wire.endTransmission();
   //delay(1000);
   int x = 0;
@@ -111,4 +110,5 @@ void loop() {
   }
   Serial.println();
   
+  */
 }

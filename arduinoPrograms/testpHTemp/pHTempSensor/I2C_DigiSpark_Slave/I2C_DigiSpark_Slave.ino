@@ -29,10 +29,10 @@ void executeCommand() {
     TinyWireS.send(commandADDR);
   }
 
-  //int pHA = 6767;
-  //int TempA = 6868;
-  int pHA = analogRead(2);  //pin4
-  int TempA = analogRead(3); //pin3
+  int pHA = 400;
+  int TempA = 656;
+  //int pHA = analogRead(2);  //pin4
+  //int TempA = analogRead(3); //pin3
 
   pHByte[0] = (pHA >> 8) & 0xFF;
   pHByte[1] = (pHA) & 0xFF;
@@ -99,7 +99,7 @@ void setup() {
   }
 
 void loop() {
-
+  TinyWireS_stop_check();
 }
 
 
