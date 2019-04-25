@@ -7,7 +7,7 @@ var devices = HID.devices();
 //console.log(devices);
 
 //THIS USES EDITED node-gamepad!!!
-var GamePad = require("node-gamepad");
+var GamePad = require("./node-gamepad/");
 var controllerFound = false;
 var controller;
 for (let o of devices) {

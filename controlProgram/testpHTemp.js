@@ -23,21 +23,25 @@ io.on('connection', function(socket) {
   });
 });
 http.listen(80, function() {
-  console.log('listening on *:80 ');
+  //console.log('listening on *:80 ');
 });
 
 var pHTemp = require("./pHTemp.js");
-pHTemp.init(0x70);
+pHTemp.init(0x48);
 
 setInterval(function() {
   //0x67 0x68 do also
   io.emit('pHTemp', 0x69);
 },50);
 
-socket.on('pH Value', function(pHByte) {
+io.on ('connection', function(socket) {
+	socket.on('pH Value', function(pHByte) {
   console.log(pHByte);
-})
+	});
+});
 
-socket.on('Temp Value', function(tempByte) {
+io.on ('connection', function(socket){
+	socket.on('Temp Value', function(tempByte) {
   console.log(tempByte);
-})
+	});
+});

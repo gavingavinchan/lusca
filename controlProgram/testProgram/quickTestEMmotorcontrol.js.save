@@ -1,0 +1,56 @@
+var i2c = require('i2c');
+var address = 0x14;
+var wire = new i2c(address, {device: '/dev/i2c-1'}); // point to your i2c address, debug provides REPL interface
+
+
+wire.scan(function(err, data) {
+  if(err) {
+    console.log("cant scan: " + err);
+    return;
+  }
+  console.log("scan: " + data);
+});
+
+var i=0;
+var j=10;
+
+setInterval( () => {
+  i += 10;
+  j += 10;
+  if (i>255) i=0;
+  if (j>255) j=0;
+  wire.write([0x22, i], function(err) {
+    if(err) {
+      console.log("cant write: " + err);
+      return;
+    }
+    console.log("write: " + i);
+  });
+
+  wire.read(1, function(err, res) {
+    if(err) {
+      console.log("read err: " + err);
+      return;
+    }
+    console.log("read: " + res);
+  });
+  */
+/*
+  wire.writeBytes(0x90, [i, j], function(err) {
+    if(err) {
+      console.log("write 0x90 err: " + err);
+      return;
+    }
+  });
+
+  wire.readBytes(0x90,2, function(err,res) {
+    if (err) {
+      var errorMessage = "error reading" + err;
+      console.log('echoerError', errorMessage);
+      //console.log("error reading" + err);
+      return;
+    }
+    console.log("res", res);
+  });
+  */
+}, 2000);

@@ -52,7 +52,6 @@ function unBitShift(result0, result1) {
 
 
 function pHTemp() {
-  /*
   if(!adc.busy) {
     //A0 for pH
     adc.readADCSingleEnded(0, 4096, 250, function(err, data1, data2) {
@@ -77,11 +76,11 @@ function pHTemp() {
 
       tempByte = unBitShift(data1, data2);
       tempValue = (TEMPM * pHByte) + TEMPB;
-
+      
     });
   };
-*/
 
+  /*
   device.readBytes(0x69, 4, function(err, res) {
     if (err){
       var errorMessage = "error reading" + err;
@@ -105,5 +104,5 @@ function pHTemp() {
 
     pHValue = (PHM * pHByte) + PHB;
     tempValue = (TEMPM * tempByte) + TEMPB;
-  });
+    */
 };

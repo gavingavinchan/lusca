@@ -1,12 +1,13 @@
 //Initiation
 
 const thrusterControl = require("./thrusterControl.js");
-const HFL = new thrusterControl({name:"HFL", address: 0x31, invert: true}),
-  HFR = new thrusterControl({name:"HFR", address: 0x33, invert: true}),
-  HRL = new thrusterControl({name:"HRL", address: 0x32, invert: false}),
-  HRR = new thrusterControl({name:"HRR", address: 0x30, invert: false}),
+const HFL = new thrusterControl({name:"HFL", address: 0x39, invert: true}),
+  HFR = new thrusterControl({name:"HFR", address: 0x37, invert: true}),
+  HRL = new thrusterControl({name:"HRL", address: 0x30, invert: false}),
+  HRR = new thrusterControl({name:"HRR", address: 0x36, invert: false}),
   VF = new thrusterControl({name:"VF", address: 0x3A, invert: false}),
-  VR = new thrusterControl({name:"VR", address: 0x3B, invert: true});
+  VR = new thrusterControl({name:"VR", address: 0x3B, invert: true}),
+  SILO = new thrusterControl({name:"silo", address: 0x2D, invert: false});
 
 const express = require('express');
 const app = express();
@@ -44,10 +45,14 @@ var thrustProfile = require("./thrustProfile6T.js");
 var servoControl = require("./servoControl.js");
 servoControl.init(0x17);
 
-const EMControl = require("./EMControl.js");
-const EM1 = new EMControl({name: 'EM1', address: 0x14});
-const EM2 = new EMControl({name: 'EM2', address: 0x16});
+//const EMControl = require("./EMControl.js");
+//const EM1 = new EMControl({name: 'EM1', address: 0x14});
+//const EM2 = new EMControl({name: 'EM2', address: 0x16});
 
+
+const EMmotorcontrol = require("./EMmotorcontrol.js");
+const EM1 = new EMmotorcontrol({name: 'EM1', address: 0x11});
+const EM2 = new EMmotorcontrol({name: 'EM2', address: 0x12});
 
 var ds4Control = require("./ds4Control.js");
 
@@ -61,8 +66,10 @@ var pinger = require("./pinger.js");
 pinger.init(0x14);
 
 var echoer = require('./echo.js');
-echoer.init(0x14);
+echoer.init(0x12);
 
+var pHTemp = require("./pHTemp.js");
+pHTemp.init(0x64);
 
 //Program initiation time
 io.emit('initiationTime', new Date(Date. UTC(0,0,0,0,0,0)));
@@ -109,4 +116,4 @@ var status = {
 
 exports.getStatus = function() {
   return status;
-}
+};
