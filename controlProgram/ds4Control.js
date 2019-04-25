@@ -1,3 +1,5 @@
+const silo_pwr = 0.05;
+
 //var socket = io();
 var io = require('socket.io-client');
 var socket = io.connect('http://localhost:80');
@@ -23,6 +25,9 @@ for (let o of devices) {
   }
 }
 
+if(!controllerFound) {
+  socket.emit('miscError', 'no controller found');
+}
 
 
 
@@ -47,7 +52,7 @@ var status = {
     HR: 0,
     VL: 0,
     VR: 0,
-    fineCoarse: true,
+    fineCoarse: false,
   },
   manipulator: {
     EM1: {
@@ -118,7 +123,6 @@ if(controllerFound) {
   })
 
 
-
   controller.on("circle:press", function() {
     status.gamepad.direction *= -1;
     socket.emit('profile.direction', status.gamepad.direction);
@@ -134,36 +138,84 @@ if(controllerFound) {
     socket.emit('profile.fineCoarse', status.thrust.fineCoarse);
   })
 
+  controller.on("share:press", function() {
+    socket.emit("thrusterTarget.silo", -silo_pwr);
+  });
+
+  controller.on("share:release", function(){
+    socket.emit("thrusterTarget.silo", 0.0);
+  });
+
+  controller.on("options:press", function() {
+    socket.emit("thrusterTarget.silo", silo_pwr);
+  });
+
+  controller.on("options:release", function(){
+    socket.emit("thrusterTarget.silo", 0.0 );
+  });
+
+
+function EMemit(_EM,_strength,_side,_boolean) {
+  socket.emit(_EM, {strength: _strength, side: _side, boolean: _boolean});
+}
 
   //electromagnet
   controller.on("l1:press", function(){
-    let _strength = 0;
     if(status.manipulator.EM1.left) {
       status.manipulator.EM1.left = false;
-      _strength = 0;
+
+      EMemit("EM1",100,"left",status.manipulator.EM1.left);
+      setTimeout(function() {
+        EMemit("EM1",0,"left",status.manipulator.EM1.left);
+      },500);
     } else {
       status.manipulator.EM1.left = true;
-      _strength = 255;
+      EMemit("EM1",255,"left",status.manipulator.EM1.left);
     }
-
-    socket.emit('EM1', {strength: _strength, side: "left", booleanLeft: status.manipulator.EM1.left});
-  })
-
-
+  });
 
   controller.on("r1:press", function(){
-    let _strength = 0;
     if(status.manipulator.EM1.right) {
       status.manipulator.EM1.right = false;
-      _strength = 0;
+      EMemit("EM1",100,"right",status.manipulator.EM1.right);
+      setTimeout(function() {
+        EMemit("EM1",0,"right",status.manipulator.EM1.right);
+      },500);
     } else {
       status.manipulator.EM1.right = true;
-      _strength = 255;
+      EMemit("EM1",255,"right",status.manipulator.EM1.right);
     }
-
-    socket.emit('EM1', {strength: _strength, side: "right", booleanRight: status.manipulator.EM1.right});
   })
 
+
+  controller.on("square:press", function(){
+    if(status.manipulator.EM2.left) {
+      status.manipulator.EM2.left = false;
+      EMemit("EM2",154,"left",status.manipulator.EM2.left);
+      setTimeout(function() {
+        EMemit("EM2",0,"left",status.manipulator.EM2.left);
+      },500);
+    } else {
+      status.manipulator.EM2.left = true;
+      EMemit("EM2",1,"left",status.manipulator.EM2.left);
+    }
+  })
+
+  controller.on("triangle:press", function(){
+    //console.log("pressed triangle");
+    if(status.manipulator.EM2.right) {
+      status.manipulator.EM2.right = false;
+      EMemit("EM2",154,"right",status.manipulator.EM2.right);
+      setTimeout(function() {
+        EMemit("EM2",0,"right",status.manipulator.EM2.right);
+      },500);
+      //console.log("EM off");
+    } else {
+      status.manipulator.EM2.right = true;
+      EMemit("EM2",1,"right",status.manipulator.EM2.right);
+      //console.log("EM on");
+    }
+  })
 
   //servo
   controller.on("dpadUp:press", function() {
@@ -217,12 +269,20 @@ if(controllerFound) {
     //console.log('_micros: ' + _micros);
     socket.emit('CAM.ch3', status.video.ch3);
   })
+
+  var commandSender;
+  controller.on("dpadRight:press",function() {
+    socket.emit('pHTemp',0x69);
+  });
 }
 
 
 
 
+/*
 setInterval(function() {
-  socket.emit('Ping');
-  socket.emit('echo');
-},50);
+  // socket.emit('Ping');
+  //socket.emit('echo');
+  socket.emit('pHTemp',0x69);
+},1000);
+*/

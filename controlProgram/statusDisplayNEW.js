@@ -24,7 +24,7 @@ var status = {
     HRR: 0,
     VL: 0,
     VR: 0,
-    fineCoarse: true,
+    fineCoarse: false,
     direction: 1,
     error: ["null","null","null"]
   },
@@ -63,6 +63,10 @@ var status = {
   },
   misc: {
     error: ["null","null","null"]
+  },
+  pHProbe: {
+    pH: 0,
+    temp: 0,
   },
   message: [],
   initiationTime: new Date()
@@ -147,9 +151,22 @@ socket.on('CAM.ch3', function(_channel) {
 
 
 
-socket.on('EM1', function(_EM1) {
-  status.manipulator.EM1.left = _EM1.booleanLeft;
-  status.manipulator.EM1.right = _EM1.booleanRight;
+socket.on('EM1', function(_EM) {
+  if(_EM.side == "left") {
+    status.manipulator.EM1.left = _EM.boolean;
+  } else {
+    status.manipulator.EM1.right = _EM.boolean;
+    //status.manipulator.EM1.right = _EM1.booleanRight; //very dumb, just boolean
+  }
+});
+
+socket.on('EM2', function(_EM) {
+  if(_EM.side == "left") {
+    status.manipulator.EM2.left = _EM.boolean;
+  } else {
+    status.manipulator.EM2.right = _EM.boolean;
+    //status.manipulator.EM1.right = _EM1.booleanRight; //very dumb, just boolean
+  }
 });
 
 
@@ -201,6 +218,13 @@ socket.on('miscError', function(_error) {
   status.misc.error[miscErrorArrMax] = _error + "\t" + runTime() + "   Num: " + miscErrorNum;
 })
 
+socket.on('pH Value', function (pHValue) {
+  status.pHProbe.pH = pHValue;
+});
+
+socket.on('Temp Value', function (tempValue) {
+  status.pHProbe.temp = tempValue;
+});
 
 
 var CLI         = require('clui'),
@@ -261,8 +285,6 @@ function draw() {
 
   //gaugeLine(outputBuffer, "Thruster profile HRR", status.profile.HRR);
 
-  var blankLine = new Line(outputBuffer).fill().store();
-
   gaugeLine(outputBuffer, "Thruster HFL", status.thrust.HFL);
 
   gaugeLine(outputBuffer, "Thruster HFR", status.thrust.HFR);
@@ -279,13 +301,11 @@ function draw() {
 
   var blankLine = new Line(outputBuffer).fill().store();
 
-  var blankLine = new Line(outputBuffer).fill().store();
-
 
 
   booleanLine(outputBuffer, "Direction: ", 11, status.thrust.direction, "Front", "Rear");
 
-  booleanLine(outputBuffer, "fineCoarse: ", 12, status.thrust.fineCoarse, "Coarse", "Fine");
+  booleanLine(outputBuffer, "fineCoarse: ", 12, status.thrust.fineCoarse, "Fine", "Coarse");
 
   var blankLine = new Line(outputBuffer).fill().store();
 
@@ -302,8 +322,8 @@ function draw() {
 
   booleanLine(outputBuffer, "EM1.left: ", 11, status.manipulator.EM1.left, "ON", "OFF");
   booleanLine(outputBuffer, "EM1.right: ", 11, status.manipulator.EM1.right, "ON", "OFF");
-
-  var blankLine = new Line(outputBuffer).fill().store();
+  booleanLine(outputBuffer, "EM2.left: ", 11, status.manipulator.EM2.left, "OFF", "ON");
+  booleanLine(outputBuffer, "EM2.right: ", 11, status.manipulator.EM2.right, "OFF", "ON");
 
   var blankLine = new Line(outputBuffer).fill().store();
 
@@ -319,13 +339,13 @@ function draw() {
 
 
   var line = new Line(outputBuffer)
-    .column("Pinger Error: ", 15)
+    .column("V-reader Error: ", 16)
     .column(status.pinger.error[1].toString(), 80)
     .fill()
     .store();
 
   var line = new Line(outputBuffer)
-    .column("Pinger Error: ", 15)
+    .column("V-reader Error: ", 16)
     .column(status.pinger.error[0].toString(), 80)
     .fill()
     .store();
@@ -353,9 +373,6 @@ function draw() {
 
   var blankLine = new Line(outputBuffer).fill().store();
 
-  var blankLine = new Line(outputBuffer).fill().store();
-
-
   var line = new Line(outputBuffer)
     .column("Thruster Error: ", 15)
     .column(status.thrust.error[2].toString(), 80)
@@ -379,8 +396,6 @@ function draw() {
 
 
   var blankLine = new Line(outputBuffer).fill().store();
-  var blankLine = new Line(outputBuffer).fill().store();
-
 
   var line = new Line(outputBuffer)
     .column("Miscellaneou Error: ", 20)
@@ -403,6 +418,19 @@ function draw() {
 
 
   var blankLine = new Line(outputBuffer).fill().store();
+
+  var line = new Line(outputBuffer)
+    .column("pH: ", 4)
+    .column(status.pHProbe.pH.toFixed(3), 30)
+    .fill()
+    .store();
+
+  var line = new Line(outputBuffer)
+    .column("Temp: ", 6)
+    .column(status.pHProbe.temp.toFixed(3), 30)
+    .fill()
+    .store();
+
   var blankLine = new Line(outputBuffer).fill().store();
 
   var line = new Line(outputBuffer)
@@ -413,15 +441,14 @@ function draw() {
 
   clear();
   outputBuffer.output();
-}
+};
 
-
-//***********
+//**********
 exports.init = function() {
   setInterval(function() {
     draw();
   },50);
-}
+};
 
 
 function runTime() {
@@ -434,4 +461,28 @@ function runTime() {
     ("0" + m.getUTCSeconds()).slice(-2) + ":" +
     ("00" + m.getTime()).slice(-3);
   return runTimeString.toString();
-}
+};
+/*
+var blankLine = new Line(outputBuffer).fill().store();
+
+var line = new Line(outputBuffer)
+  .column("pH: ", 30)
+  .column(status.pHProbe.pH, 50)
+  .fill()
+  .store();
+
+var line = new Line(outputBuffer)
+  .column("Temp: ", 30)
+  .column(status.pHProbe.temp, 50)
+  .fill()
+  .store();
+
+//console.log pHnTemp Value
+socket.on('pH Value', function (pHValue) {
+  console.log('pH: ' + pHValue);
+});
+
+socket.on('Temp Value', function (tempValue) {
+  console.log('Temp: ' + tempValue);
+});
+*/

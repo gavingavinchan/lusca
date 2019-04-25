@@ -1,7 +1,7 @@
-var fineH = 0.45;
-var coarseH = 0.95;
+var fineH = 0.15;
+var coarseH = 0.4;
 var fineV = 0.45;
-var coarseV = 0.95;
+var coarseV = 0.5;
 
 
 var io = require('socket.io-client');
@@ -121,6 +121,7 @@ function truncate(value) {
 
 //*************************
 var mappingH = function(drive, strafe, rotate) {
+//	rotate = rotate *1.3;
   if (state.direction>0)
     return {
       HFL: profileChainH(transformH(deadZone(drive),deadZone(strafe),deadZone(rotate)).HFL),
