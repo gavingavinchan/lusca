@@ -19,13 +19,14 @@ void setup() {
   Wire.begin(); // join i2c bus (address optional for master)
   pinMode(ledPin, OUTPUT);
   Serial.begin(57600);
-
+/*
   Serial.println("blink 5 times");
   Wire.beginTransmission(slaveAddr);
   Wire.write(slaveAddr);
   Wire.write(5);
   Wire.endTransmission();
   delay(10);
+  */
 }
 
 byte hb =0;
@@ -34,7 +35,7 @@ bool hbReceive = false;
 bool lbReceive = false;
 
 void loop() {
-
+/*
   for(int i=0;i<10;i++) {
     Wire.beginTransmission(slaveAddr); // transmit to device
     Wire.write(0x99);        // Slave blink command
@@ -71,12 +72,11 @@ void loop() {
     Serial.println("cannot Ping");
   }
 
-
-
+*/
+/*
   byte echoHB = 0;
   byte echoLB = 0;
   bool echoHBReceive = false;
-  bool echoLBReceive = false;
   for(int i=0;i<10;i++) {
     Wire.beginTransmission(slaveAddr); // transmit to device
     Wire.write(0x90);        // Slave blink command
@@ -85,45 +85,61 @@ void loop() {
     Wire.endTransmission();    // stop transmitting
 
     //delay(50);
-    Wire.requestFrom(slaveAddr,1);
+    Wire.requestFrom(slaveAddr,2);
     while(Wire.available()) {
       echoHB = Wire.read();
-      echoHBReceive = true;
-    }
-  
-    Wire.requestFrom(slaveAddr,1);
-    while(Wire.available()) {
       echoLB = Wire.read();
-      echoLBReceive = true;
+      echoHBReceive = true;
+      
     }
   }
   
-  if(echoHBReceive == true && echoLBReceive == true) { //
+  if(echoHBReceive == true) { //
     Serial.print("echo results: ");
     Serial.print(echoHB);
     Serial.println(echoLB);
     echoHBReceive = false;
-    echoLBReceive = false;
   } else {
     Serial.println("cannot Echo");
   }
-
-
-
-
-  Blink(2);                // Arduino Master Blink
+ 
+*/
+/*
+  Wire.beginTransmission(slaveAddr); // transmit to device
+  Wire.write(0x90);        // Slave blink command
+  Wire.write(0x05);
+  Wire.write(0x03);
+  Wire.endTransmission();    // stop transmitting
+*/
   Wire.beginTransmission(slaveAddr); // transmit to device
   Wire.write(0x21);        // Slave blink command
   Wire.write(255);        // blink for how much times
   Wire.endTransmission();    // stop transmitting
+  Serial.println("0x21,127 sent");
   delay(1000);
   
+/*
+  Blink(2);                // Arduino Master Blink
   Wire.beginTransmission(slaveAddr); // transmit to device
   Wire.write(0x21);        // Slave blink command
-  Wire.write(0);        // blink for how much times
+  Wire.write(255);        // blink for how much times
   Wire.endTransmission();    // stop transmitting
   Serial.println("0x21,255 sent");
-  delay(1000);
+  delay(3000);
+  
+  Wire.beginTransmission(slaveAddr); // transmit to device
+  Wire.write(0x21);        // Slave blink command
+  Wire.write(102);        // blink for how much times
+  Wire.endTransmission();    // stop transmitting
+  Serial.println("0x21,102 sent");
+  delay(10);
+  
+  Wire.beginTransmission(slaveAddr); // transmit to device
+  Wire.write(0x21);        // Slave blink command
+  Wire.write(127);        // blink for how much times
+  Wire.endTransmission();    // stop transmitting
+  Serial.println("0x21,127 sent");
+  delay(3000);
 
 
 
@@ -132,15 +148,23 @@ void loop() {
   Wire.write(0x22);        // Slave blink command
   Wire.write(255);        // blink for how much times
   Wire.endTransmission();    // stop transmitting
-  delay(1000);
-
+  Serial.println("0x22,255 sent");
+  delay(3000);
+  
   Wire.beginTransmission(slaveAddr); // transmit to device
   Wire.write(0x22);        // Slave blink command
-  Wire.write(0);        // blink for how much times
+  Wire.write(102);        // blink for how much times
   Wire.endTransmission();    // stop transmitting
-  Serial.println("0x22,255 sent");
-  delay(1000);
+  Serial.println("0x22,102 sent");
+  delay(10);
   
+  Wire.beginTransmission(slaveAddr); // transmit to device
+  Wire.write(0x22);        // Slave blink command
+  Wire.write(127);        // blink for how much times
+  Wire.endTransmission();    // stop transmitting
+  Serial.println("0x22,127 sent");
+  delay(3000);
+*/
 }
 
 void Blink(byte times){ 

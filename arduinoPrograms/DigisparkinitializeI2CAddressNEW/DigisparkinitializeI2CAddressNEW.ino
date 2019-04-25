@@ -8,7 +8,7 @@ void setup(){
 void loop(){
 
   //Write value
-  EEPROM.put(0, 0x15); //wirte I2C address
+  EEPROM.put(0, 0x70); //wirte I2C address
 
   Blink(1);
 
