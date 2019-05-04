@@ -20,7 +20,6 @@ void testMotorControl(byte pwr){
   while(Wire.available()){
     Serial.println( (int) Wire.read() );
   }
-  
 }
 
 void loop()
