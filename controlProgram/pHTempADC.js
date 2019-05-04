@@ -29,10 +29,10 @@ socket.on('pHTemp', function(command) {
   //send results
   if (command == 0x67) {
     //console.log('sending Bytes');
-    socket.emit('pH Value', pHValue);
+    socket.emit('pH Value', pHByte);
   } else if (command == 0x68) {
     //console.log('sending Bytes');
-    socket.emit('Temp Value', tempValue);
+    socket.emit('Temp Value', tempByte);
   } else if (command == 0x69) {
     //console.log('sending Bytes');
     if (pHValue) {
@@ -54,29 +54,29 @@ function unBitShift(result0, result1) {
 function pHTemp() {
   if(!adc.busy) {
     //A0 for pH
-    adc.readADCSingleEnded(0, 4096, 250, function(err, data1, data2) {
+    adc.readADCSingleEnded(0, 4096, 250, function(err, data) {
       if(err) {
         var errorMessage = 'error reading: ' + err;
         socket.emit('miscError' + errorMessage);
         return;
       };
 
-      pHByte = unBitShift(data1, data2);
-      pHValue = (PHM * pHByte) + PHB;
+      pHByte = data;
+     pHValue = (PHM * pHByte) + PHB;
 
 
     });
     //A2 for temperature
-    adc.readADCSingleEnded(2, 4096, 250, function(err, data1, data2) {
+    adc.readADCSingleEnded(2, 4096, 250, function(err, data) {
       if(err) {
         var errorMessage = 'error reading: ' + err;
         socket.emit('miscError' + errorMessage);
         return;
       };
 
-      tempByte = unBitShift(data1, data2);
+      tempByte = data;
       tempValue = (TEMPM * pHByte) + TEMPB;
-      
+
     });
   };
 

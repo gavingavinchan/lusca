@@ -1,5 +1,5 @@
-const PHM = 0.0168789808917;
-const PHB = 0.1516;
+const PHM = 0.06;
+const PHB = -17;
 const TEMPM = 0;
 const TEMPB = 0;
 
@@ -7,12 +7,9 @@ const TEMPB = 0;
 var i2c = require('i2c');
 var io = require('socket.io-client');
 var socket = io.connect('http://localhost:80');
-<<<<<<< Updated upstream
 
 var ads1x15 = require('node-ads1x15');
 var adc = new ads1x15(1);
-=======
->>>>>>> Stashed changes
 
 exports.init = function(pHTempAddr) {
   device = new i2c(pHTempAddr, {device: '/dev/i2c-1'});
@@ -55,7 +52,6 @@ function unBitShift(result0, result1) {
 
 
 function pHTemp() {
-<<<<<<< Updated upstream
   /*
   if(!adc.busy) {
     //A0 for pH
@@ -86,8 +82,6 @@ function pHTemp() {
   };
 */
 
-=======
->>>>>>> Stashed changes
   device.readBytes(0x69, 4, function(err, res) {
     if (err){
       var errorMessage = "error reading" + err;
@@ -111,10 +105,5 @@ function pHTemp() {
 
     pHValue = (PHM * pHByte) + PHB;
     tempValue = (TEMPM * tempByte) + TEMPB;
-<<<<<<< Updated upstream
-=======
-    //console.log(pHValue);
-    //console.log(tempValue);
->>>>>>> Stashed changes
   });
 };

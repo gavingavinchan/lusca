@@ -1,4 +1,4 @@
-const silo_pwr = 0.05;
+const silo_pwr = 0.2;
 
 //var socket = io();
 var io = require('socket.io-client');

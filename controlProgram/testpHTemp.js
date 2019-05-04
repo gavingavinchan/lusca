@@ -23,29 +23,12 @@ http.listen(80, function() {
 
 
 var pHTemp = require("./pHTemp.js");
-<<<<<<< Updated upstream
-pHTemp.init(0x48);
-=======
-pHTemp.init(0x64);
->>>>>>> Stashed changes
+pHTemp.init(0x32);
 
 setInterval(function() {
   io.emit('pHTemp',0x69);
 },200);
 
-<<<<<<< Updated upstream
-io.on ('connection', function(socket) {
-	socket.on('pH Value', function(pHByte) {
-  console.log(pHByte);
-	});
-});
-
-io.on ('connection', function(socket){
-	socket.on('Temp Value', function(tempByte) {
-  console.log(tempByte);
-	});
-});
-=======
 io.on('connection', function(socket) {
 socket.on('pH Value', function (pHByte) {
   console.log('0x69 pH: ' + pHByte);
@@ -61,4 +44,3 @@ io.on('connection', function (socket) {
 io.on('miscError', function(message){
   console.log(message);
 });
->>>>>>> Stashed changes
