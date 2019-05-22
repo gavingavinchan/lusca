@@ -1,12 +1,12 @@
 //Initiation
 
 const thrusterControl = require("./thrusterControl.js");
-const HFL = new thrusterControl({name:"HFL", address: 0x37, invert: true}),
+const HFL = new thrusterControl({name:"HFL", address: 0x39, invert: true}),
   HFR = new thrusterControl({name:"HFR", address: 0x30, invert: true}),
-  HRL = new thrusterControl({name:"HRL", address: 0x39, invert: false}),
+  HRL = new thrusterControl({name:"HRL", address: 0x37, invert: false}),
   HRR = new thrusterControl({name:"HRR", address: 0x36, invert: false}),
-  VF = new thrusterControl({name:"VF", address: 0x3c, invert: true}),
-  VR = new thrusterControl({name:"VR", address: 0x3B, invert: true}),
+  VF = new thrusterControl({name:"VF", address: 0x3A, invert: false}),
+  VR = new thrusterControl({name:"VR", address: 0x3E, invert: true}),
   SILO = new thrusterControl({name:"silo", address: 0x2D, invert: false});
 
 const express = require('express');

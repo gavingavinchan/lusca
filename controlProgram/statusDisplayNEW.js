@@ -24,7 +24,7 @@ var status = {
     HRR: 0,
     VL: 0,
     VR: 0,
-    fineCoarse: false,
+    fineCoarse: "coarse",
     direction: 1,
     error: ["null","null","null"]
   },
@@ -48,9 +48,9 @@ var status = {
     zero: 0,
   },
   video: {
-    ch1: true,
-    ch2: true,
-    ch3: true,
+    ch1: false,
+    ch2: false,
+    ch3: false,
   },
   pinger: {
     pinVoltage: 0,
@@ -66,7 +66,9 @@ var status = {
   },
   pHProbe: {
     pH: 0,
+    pHtime: 0,
     temp: 0,
+    temptime: 0,
   },
   message: [],
   initiationTime: new Date()
@@ -220,10 +222,12 @@ socket.on('miscError', function(_error) {
 
 socket.on('pH Value', function (pHValue) {
   status.pHProbe.pH = pHValue;
+  status.pHProbe.pHtime = runTime();
 });
 
 socket.on('Temp Value', function (tempValue) {
   status.pHProbe.temp = tempValue;
+  status.pHProbe.temptime = runTime();
 });
 
 
@@ -305,7 +309,12 @@ function draw() {
 
   booleanLine(outputBuffer, "Direction: ", 11, status.thrust.direction, "Front", "Rear");
 
-  booleanLine(outputBuffer, "fineCoarse: ", 12, status.thrust.fineCoarse, "Fine", "Coarse");
+  //booleanLine(outputBuffer, "fineCoarse: ", 12, status.thrust.fineCoarse, "Fine", "Coarse");
+  var line = new Line(outputBuffer)
+    .column("fineCoarse: ", 12)
+    .column(status.thrust.fineCoarse,50)
+    .fill()
+    .store();
 
   var blankLine = new Line(outputBuffer).fill().store();
 
@@ -322,8 +331,8 @@ function draw() {
 
   booleanLine(outputBuffer, "EM1.left: ", 11, status.manipulator.EM1.left, "ON", "OFF");
   booleanLine(outputBuffer, "EM1.right: ", 11, status.manipulator.EM1.right, "ON", "OFF");
-  booleanLine(outputBuffer, "EM2.left: ", 11, status.manipulator.EM2.left, "OFF", "ON");
-  booleanLine(outputBuffer, "EM2.right: ", 11, status.manipulator.EM2.right, "OFF", "ON");
+  booleanLine(outputBuffer, "EM2.left: ", 11, status.manipulator.EM2.left, "ON", "OFF");
+  booleanLine(outputBuffer, "EM2.right: ", 11, status.manipulator.EM2.right, "ON", "OFF");
 
   var blankLine = new Line(outputBuffer).fill().store();
 
@@ -421,13 +430,15 @@ function draw() {
 
   var line = new Line(outputBuffer)
     .column("pH: ", 4)
-    .column(status.pHProbe.pH.toFixed(3), 30)
+    .column(status.pHProbe.pH.toFixed(3), 60)
+    .column(status.pHProbe.pHtime.toString(), 15)
     .fill()
     .store();
 
   var line = new Line(outputBuffer)
     .column("Temp: ", 6)
-    .column(status.pHProbe.temp.toFixed(3), 30)
+    .column(status.pHProbe.temp.toFixed(3), 58)
+    .column(status.pHProbe.temptime.toString(), 15)
     .fill()
     .store();
 

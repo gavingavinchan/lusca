@@ -1,5 +1,5 @@
-const PHM = 0.06;
-const PHB = -17;
+const PHM = -0.02727272727;
+const PHB = 29.909;
 const TEMPM = 0;
 const TEMPB = 0;
 
@@ -7,9 +7,6 @@ const TEMPB = 0;
 var i2c = require('i2c');
 var io = require('socket.io-client');
 var socket = io.connect('http://localhost:80');
-
-var ads1x15 = require('node-ads1x15');
-var adc = new ads1x15(1);
 
 exports.init = function(pHTempAddr) {
   device = new i2c(pHTempAddr, {device: '/dev/i2c-1'});
@@ -36,7 +33,7 @@ socket.on('pHTemp', function(command) {
   } else if (command == 0x69) {
     //console.log('sending Bytes');
     if (pHValue) {
-      socket.emit('pH Value', pHByte);
+      socket.emit('pH Value', pHValue);
       socket.emit('Temp Value', tempByte);
     } else {
       socket.emit('pH Value', -1);
@@ -93,7 +90,7 @@ function pHTemp() {
     // console.log('pH Result: ' + pHResult);
 
     pHByte = unBitShift(pHResult[0], pHResult[1]);
-    //console.log('pHByte: ' + pHByte);
+    console.log('pHByte: ' + pHByte);
 
 
     tempResult[0] = res[2];

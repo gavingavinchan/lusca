@@ -52,7 +52,7 @@ var status = {
     HR: 0,
     VL: 0,
     VR: 0,
-    fineCoarse: false,
+    fineCoarse: "coarse",
   },
   manipulator: {
     EM1: {
@@ -74,8 +74,9 @@ var status = {
     zero: 0,
   },
   video: {
-    ch1: true,
-    ch2: true
+    ch1: false,
+    ch2: false,
+    ch3: false
   },
   message: []
 };
@@ -129,10 +130,12 @@ if(controllerFound) {
   });
 
   controller.on("x:press", function() {
-    if(status.thrust.fineCoarse) {
-      status.thrust.fineCoarse = false;
+    if(status.thrust.fineCoarse == "fine") {
+      status.thrust.fineCoarse = "medium";
+    } else if(status.thrust.fineCoarse == "medium") {
+      status.thrust.fineCoarse = "coarse";
     } else {
-      status.thrust.fineCoarse = true;
+      status.thrust.fineCoarse = "fine";
     }
 
     socket.emit('profile.fineCoarse', status.thrust.fineCoarse);

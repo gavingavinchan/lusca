@@ -1,7 +1,9 @@
-var fineH = 0.15;
-var coarseH = 0.4;
-var fineV = 0.45;
-var coarseV = 0.5;
+var fineH = 0.17;
+var fineV = 0.35;
+var mediumH = 0.3;
+var mediumV = 0.5;
+var coarseH = 0.6;
+var coarseV = 0.6;
 
 
 var io = require('socket.io-client');
@@ -201,9 +203,12 @@ socket.on('tilt', function(value) {
 
 //*****
 var limiter = function(fineCoarse) {   //boolean; fine:true, coarse:false
-  if(fineCoarse) {
+  if(fineCoarse == "fine") {
     multiplierLimitH = fineH;
     multiplierLimitV = fineV;
+  } else if(fineCoarse == "medium") {
+    multiplierLimitH = mediumH;
+    multiplierLimitV = mediumV;
   } else {
     multiplierLimitH = coarseH;
     multiplierLimitV = coarseV;

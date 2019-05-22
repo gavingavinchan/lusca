@@ -23,11 +23,11 @@ http.listen(80, function() {
 
 
 var pHTemp = require("./pHTemp.js");
-pHTemp.init(0x32);
+pHTemp.init(0x35);
 
 setInterval(function() {
   io.emit('pHTemp',0x69);
-},200);
+},500);
 
 io.on('connection', function(socket) {
 socket.on('pH Value', function (pHByte) {
