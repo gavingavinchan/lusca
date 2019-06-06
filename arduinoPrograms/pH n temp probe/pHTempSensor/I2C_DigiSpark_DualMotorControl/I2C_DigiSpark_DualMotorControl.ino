@@ -14,14 +14,20 @@ volatile byte commandADDR = 0;
 volatile byte echoLow = 0;
 volatile byte echoHigh = 0;
 
+void Blink(byte times){ 
+  for (byte i=0; i< times; i++){
+    digitalWrite(1,HIGH);
+    delay(250);
+    digitalWrite(1,LOW);
+    delay(250);
+  }
+}
+
 void EMon(bool _channel, int _value){
   int valueOnOrigin = (_value-127)*2;
   if(valueOnOrigin>255) {valueOnOrigin = 255;}
   if(_channel) {
-    if(_value == 0) {          //for backwards compatibility
-      digitalWrite(channelA_D, LOW);
-      analogWrite(channelA_A, 0);
-    } else if(valueOnOrigin>0) {
+    if(valueOnOrigin>0) {
      digitalWrite(channelA_D, HIGH);
      analogWrite(channelA_A, 255-valueOnOrigin);
     } else {
@@ -29,10 +35,7 @@ void EMon(bool _channel, int _value){
      analogWrite(channelA_A, -valueOnOrigin);
     }
   } else {
-    if(_value == 0) {          //for backwards compatibility
-      digitalWrite(channelB_D, LOW);
-      analogWrite(channelB_A, 0);
-    } else if(valueOnOrigin>0) {
+    if(valueOnOrigin>0) {
      digitalWrite(channelB_D, HIGH);
      analogWrite(channelB_A, 255-valueOnOrigin);
     } else {
@@ -49,8 +52,12 @@ void executeCommand() {
     EMon(true, commandADDR);
   } else if(command == 0x22) {
     EMon(false, commandADDR);
-  } else if(command == 0xCE) {
+  }
+  if(command == 0xCE) {
     EEPROM.put(0, commandADDR);
+    // delay(1000);
+    // Blink(100);
+    TinyWireS.send(commandADDR);
   }
 }
 
@@ -83,24 +90,25 @@ void requestEvent() {
   if (command == 0x90){
     TinyWireS.send(echoHigh);
     TinyWireS.send(echoLow);
-  }else {
+  }else
     TinyWireS.send(commandADDR);
-  }
 }
 
 void setup() {
   volatile byte SLAVE_ADDR = 0;
   SLAVE_ADDR = EEPROM.read(0);
   if(SLAVE_ADDR > 127 || SLAVE_ADDR < 1) {
-    SLAVE_ADDR = 16
-    ;                                              //CHANGE DEFAULT I2C address for each EM, cuz EEPROM not reliable
+    SLAVE_ADDR = 100;
   }
 
   TinyWireS.begin(SLAVE_ADDR);
 
   TinyWireS.onReceive(receiveEvent);
   TinyWireS.onRequest(requestEvent);
-  
+
+  pinMode(4, INPUT);
+  pinMode(3, INPUT);
+
   pinMode(channelA_D,OUTPUT);
   pinMode(channelA_A,OUTPUT);
   pinMode(channelB_D,OUTPUT);
@@ -110,5 +118,17 @@ void setup() {
 }
 
 void loop() {
-  TinyWireS_stop_check();
-}  
+
+}
+
+
+
+
+
+
+
+
+
+
+
+  
