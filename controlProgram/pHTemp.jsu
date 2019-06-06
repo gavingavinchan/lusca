@@ -1,4 +1,4 @@
-const PHM = -0.03158;
+const PHM = -0.0315789;
 const PHB = 26.2;
 const TEMPM = 0;
 const TEMPB = 0;

@@ -3,7 +3,7 @@ var io = require('socket.io-client');
 var socket = io.connect('http://localhost:80');
 
 const timeInterval = 50;
-const maxAccelerationPerSecond = 0.5;
+const maxAccelerationPerSecond = 1.5;
 const maxStepPerInterval = maxAccelerationPerSecond * (timeInterval/1000);
 
 

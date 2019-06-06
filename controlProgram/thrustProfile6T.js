@@ -1,8 +1,8 @@
-var fineH = 0.17;
-var fineV = 0.35;
-var mediumH = 0.3;
-var mediumV = 0.5;
-var coarseH = 0.6;
+var fineH = 0.08;
+var fineV = 0.15;
+var mediumH = 0.2;
+var mediumV = 0.35;
+var coarseH = 0.4;
 var coarseV = 0.6;
 
 
