@@ -6,9 +6,11 @@ var coarseH = 0.4;
 var coarseV = 0.6;
 
 
-var io = require('socket.io-client');
-var socket = io.connect('http://localhost:80');
+//var io = require('socket.io-client');
+//var socket = io.connect('http://localhost:80');
 
+var _messenger = require("./messenger.js");
+var messenger = new _messenger.client({});
 
 var state = {
   drive: 0,
@@ -151,52 +153,52 @@ var mappingV = function(x,y) {
 
 //*************************
 //is there a way to be this clumbersome
-socket.on('drive', function(value) {
+messenger.on('drive', function(value) {
   state.drive = value;
   let mapped = mappingH(state.drive, state.strafe, state.rotate);
 
-  socket.emit('thrusterTarget.HFL', mapped.HFL);
-  socket.emit('thrusterTarget.HFR', mapped.HFR);
-  socket.emit('thrusterTarget.HRL', mapped.HRL);
-  socket.emit('thrusterTarget.HRR', mapped.HRR);
+  messenger.emit('thrusterTarget.HFL', mapped.HFL);
+  messenger.emit('thrusterTarget.HFR', mapped.HFR);
+  messenger.emit('thrusterTarget.HRL', mapped.HRL);
+  messenger.emit('thrusterTarget.HRR', mapped.HRR);
 })
 
-socket.on('strafe', function(value) {
+messenger.on('strafe', function(value) {
   state.strafe = value;
   let mapped = mappingH(state.drive, state.strafe, state.rotate);
 
-  socket.emit('thrusterTarget.HFL', mapped.HFL);
-  socket.emit('thrusterTarget.HFR', mapped.HFR);
-  socket.emit('thrusterTarget.HRL', mapped.HRL);
-  socket.emit('thrusterTarget.HRR', mapped.HRR);
+  messenger.emit('thrusterTarget.HFL', mapped.HFL);
+  messenger.emit('thrusterTarget.HFR', mapped.HFR);
+  messenger.emit('thrusterTarget.HRL', mapped.HRL);
+  messenger.emit('thrusterTarget.HRR', mapped.HRR);
 })
 
-socket.on('rotate', function(value) {
+messenger.on('rotate', function(value) {
   state.rotate = value;
   let mapped = mappingH(state.drive, state.strafe, state.rotate);
 
-  socket.emit('thrusterTarget.HFL', mapped.HFL);
-  socket.emit('thrusterTarget.HFR', mapped.HFR);
-  socket.emit('thrusterTarget.HRL', mapped.HRL);
-  socket.emit('thrusterTarget.HRR', mapped.HRR);
+  messenger.emit('thrusterTarget.HFL', mapped.HFL);
+  messenger.emit('thrusterTarget.HFR', mapped.HFR);
+  messenger.emit('thrusterTarget.HRL', mapped.HRL);
+  messenger.emit('thrusterTarget.HRR', mapped.HRR);
 })
 
 
 
-socket.on('upDown', function(value) {
+messenger.on('upDown', function(value) {
   state.upDown = value;
   let mapped = mappingV(state.tilt, state.upDown);
 
-  socket.emit('thrusterTarget.VF', mapped.VF);
-  socket.emit('thrusterTarget.VR', mapped.VR);
+  messenger.emit('thrusterTarget.VF', mapped.VF);
+  messenger.emit('thrusterTarget.VR', mapped.VR);
 })
 
-socket.on('tilt', function(value) {
+messenger.on('tilt', function(value) {
   state.tilt = value;
   let mapped = mappingV(state.tilt, state.upDown);
 
-  socket.emit('thrusterTarget.VF', mapped.VF);
-  socket.emit('thrusterTarget.VR', mapped.VR);
+  messenger.emit('thrusterTarget.VF', mapped.VF);
+  messenger.emit('thrusterTarget.VR', mapped.VR);
 })
 
 
@@ -215,12 +217,12 @@ var limiter = function(fineCoarse) {   //boolean; fine:true, coarse:false
   }
 }
 
-socket.on('profile.fineCoarse', function(_fineCoarse) {
+messenger.on('profile.fineCoarse', function(_fineCoarse) {
   limiter(_fineCoarse);
 })
 
 
 //*****
-socket.on('profile.direction', function(_direction) {
+messenger.on('profile.direction', function(_direction) {
   state.direction = _direction;
 });

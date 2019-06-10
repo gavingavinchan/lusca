@@ -1,8 +1,8 @@
 const silo_pwr = 0.2;
 
-//var socket = io();
-var io = require('socket.io-client');
-var socket = io.connect('http://localhost:80');
+
+var _messenger = require("./messenger.js");
+var messenger = new _messenger.client({});
 
 var HID = require('node-hid');
 var devices = HID.devices();
@@ -26,13 +26,13 @@ for (let o of devices) {
 }
 
 if(!controllerFound) {
-  socket.emit('miscError', 'no controller found');
+  messenger.emit('miscError', 'no controller found');
 }
 
 
 
-socket.on('connect', ()=>{
-    socket.emit('thrusterControl.start', {});
+messenger.on('connect', ()=>{
+    messenger.emit('thrusterControl.start', {});
 });
 
 var status = {
@@ -95,9 +95,8 @@ if(controllerFound) {
     gp.leftX = normalize(value.x);
     gp.leftY = -normalize(value.y);
 
-    //socket.emit('gamepad.leftJoystick', {x: gp.leftX, y: gp.leftY});
-    socket.emit('drive', gp.leftY);
-    socket.emit('rotate', gp.leftX);
+    messenger.emit('drive', gp.leftY);
+    messenger.emit('rotate', gp.leftX);
   })
 
   controller.on("right:move", function(value) {
@@ -106,27 +105,27 @@ if(controllerFound) {
     gp.rightX = normalize(value.x);
     gp.rightY = -normalize(value.y);
 
-    socket.emit('strafe', gp.rightX);
-    socket.emit('upDown', gp.rightY);
+    messenger.emit('strafe', gp.rightX);
+    messenger.emit('upDown', gp.rightY);
   })
 
 
   controller.on("l2:change", function(value) {
     let gp = status.gamepad;
     gp.l2 = value/255;
-    socket.emit('tilt', gp.r2 - gp.l2);
+    messenger.emit('tilt', gp.r2 - gp.l2);
   })
 
   controller.on("r2:change", function(value){
     let gp = status.gamepad;
     gp.r2 = value/255;
-    socket.emit('tilt', gp.r2 - gp.l2);
+    messenger.emit('tilt', gp.r2 - gp.l2);
   })
 
 
   controller.on("circle:press", function() {
     status.gamepad.direction *= -1;
-    socket.emit('profile.direction', status.gamepad.direction);
+    messenger.emit('profile.direction', status.gamepad.direction);
   });
 
   controller.on("x:press", function() {
@@ -138,28 +137,28 @@ if(controllerFound) {
       status.thrust.fineCoarse = "fine";
     }
 
-    socket.emit('profile.fineCoarse', status.thrust.fineCoarse);
+    messenger.emit('profile.fineCoarse', status.thrust.fineCoarse);
   })
 
   controller.on("share:press", function() {
-    socket.emit("thrusterTarget.silo", -silo_pwr);
+    messenger.emit("thrusterTarget.silo", -silo_pwr);
   });
 
   controller.on("share:release", function(){
-    socket.emit("thrusterTarget.silo", 0.0);
+    messenger.emit("thrusterTarget.silo", 0.0);
   });
 
   controller.on("options:press", function() {
-    socket.emit("thrusterTarget.silo", silo_pwr);
+    messenger.emit("thrusterTarget.silo", silo_pwr);
   });
 
   controller.on("options:release", function(){
-    socket.emit("thrusterTarget.silo", 0.0 );
+    messenger.emit("thrusterTarget.silo", 0.0 );
   });
 
 
 function EMemit(_EM,_strength,_side,_boolean) {
-  socket.emit(_EM, {strength: _strength, side: _side, boolean: _boolean});
+  messenger.emit(_EM, {strength: _strength, side: _side, boolean: _boolean});
 }
 
   //electromagnet
@@ -233,9 +232,9 @@ function EMemit(_EM,_strength,_side,_boolean) {
       status.video.ch1 = true;
     }
 
-    socket.emit('servo', {command:0x11, micros: _micros});
+    messenger.emit('servo', {command:0x11, micros: _micros});
     //console.log('_micros: ' + _micros);
-    socket.emit('CAM.ch1', status.video.ch1);
+    messenger.emit('CAM.ch1', status.video.ch1);
   })
 
 
@@ -251,9 +250,9 @@ function EMemit(_EM,_strength,_side,_boolean) {
       status.video.ch2 = true;
     }
 
-    socket.emit('servo', {command:0x12, micros: _micros});
+    messenger.emit('servo', {command:0x12, micros: _micros});
     //console.log('_micros: ' + _micros);
-    socket.emit('CAM.ch2', status.video.ch2);
+    messenger.emit('CAM.ch2', status.video.ch2);
   })
 
   controller.on("dpadDown:press", function() {
@@ -268,14 +267,14 @@ function EMemit(_EM,_strength,_side,_boolean) {
       status.video.ch3 = true;
     }
 
-    socket.emit('servo', {command:0x13, micros: _micros});
+    messenger.emit('servo', {command:0x13, micros: _micros});
     //console.log('_micros: ' + _micros);
-    socket.emit('CAM.ch3', status.video.ch3);
+    messenger.emit('CAM.ch3', status.video.ch3);
   })
 
   var commandSender;
   controller.on("dpadRight:press",function() {
-    socket.emit('pHTemp',0x69);
+    messenger.emit('pHTemp',0x69);
   });
 }
 
@@ -284,8 +283,8 @@ function EMemit(_EM,_strength,_side,_boolean) {
 
 /*
 setInterval(function() {
-  // socket.emit('Ping');
-  //socket.emit('echo');
-  socket.emit('pHTemp',0x69);
+  // messenger.emit('Ping');
+  //messenger.emit('echo');
+  messenger.emit('pHTemp',0x69);
 },1000);
 */

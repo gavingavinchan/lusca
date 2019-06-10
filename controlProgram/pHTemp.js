@@ -5,8 +5,8 @@ const TEMPB = 0;
 
 //console.log('starting');
 var i2c = require('i2c');
-var io = require('socket.io-client');
-var socket = io.connect('http://localhost:80');
+var _messenger = require("./messenger.js");
+var messenger = new _messenger.client({});
 
 exports.init = function(pHTempAddr) {
   device = new i2c(pHTempAddr, {device: '/dev/i2c-1'});
@@ -20,24 +20,24 @@ var pHResult = [];
 var tempResult = [];
 var pHByte;
 var tempByte;
-socket.on('pHTemp', function(command) {
+messenger.on('pHTemp', function(command) {
   //console.log('received command: ' + command);
   pHTemp();
   //send results
   if (command == 0x67) {
     //console.log('sending Bytes');
-    socket.emit('pH Value', pHValue);
+    messenger.emit('pH Value', pHValue);
   } else if (command == 0x68) {
     //console.log('sending Bytes');
-    socket.emit('Temp Value', tempValue);
+    messenger.emit('Temp Value', tempValue);
   } else if (command == 0x69) {
     //console.log('sending Bytes');
     if (pHValue) {
-      socket.emit('pH Value', pHValue);
-      socket.emit('Temp Value', tempByte);
+      messenger.emit('pH Value', pHValue);
+      messenger.emit('Temp Value', tempByte);
     } else {
-      socket.emit('pH Value', -1);
-      socket.emit('Temp Value', -1)
+      messenger.emit('pH Value', -1);
+      messenger.emit('Temp Value', -1)
     }
   };
 });
@@ -55,7 +55,7 @@ function pHTemp() {
     adc.readADCSingleEnded(0, 4096, 250, function(err, data1, data2) {
       if(err) {
         var errorMessage = 'error reading: ' + err;
-        socket.emit('miscError' + errorMessage);
+        messenger.emit('miscError' + errorMessage);
         return;
       };
 
@@ -68,7 +68,7 @@ function pHTemp() {
     adc.readADCSingleEnded(2, 4096, 250, function(err, data1, data2) {
       if(err) {
         var errorMessage = 'error reading: ' + err;
-        socket.emit('miscError' + errorMessage);
+        messenger.emit('miscError' + errorMessage);
         return;
       };
 
@@ -82,7 +82,7 @@ function pHTemp() {
   device.readBytes(0x69, 4, function(err, res) {
     if (err){
       var errorMessage = "error reading" + err;
-      socket.emit('miscError: '+ errorMessage);
+      messenger.emit('miscError: '+ errorMessage);
       return;
     };
     pHResult[0] = res[0];

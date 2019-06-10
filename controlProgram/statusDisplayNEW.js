@@ -1,5 +1,5 @@
-var io = require('socket.io-client');
-var socket = io.connect('http://localhost:80');
+var _messenger = require("./messenger.js");
+var messenger = new _messenger.client({});
 
 
 //console.log("starting");
@@ -74,86 +74,86 @@ var status = {
   initiationTime: new Date()
 };
 
-socket.on('drive', function(value) {
+messenger.on('drive', function(value) {
   status.gamepad.drive = value;
 });
 
-socket.on('strafe', function(value) {
+messenger.on('strafe', function(value) {
   status.gamepad.strafe = value;
 });
 
-socket.on('rotate', function(value) {
+messenger.on('rotate', function(value) {
   status.gamepad.rotate = value;
 });
 
-socket.on('upDown', function(value) {
+messenger.on('upDown', function(value) {
   status.gamepad.upDown = value;
 });
 
-socket.on('tilt', function(value) {
+messenger.on('tilt', function(value) {
   status.gamepad.tilt = value;
 });
 
 /*
-socket.on('thrusterTarget.HRR', function(_thrust) {
+messenger.on('thrusterTarget.HRR', function(_thrust) {
   status.profile.HRR = _thrust;
 });
 */
 
 
-socket.on('thruster.thrust.HFL', function(_thrust) {
+messenger.on('thruster.thrust.HFL', function(_thrust) {
   status.thrust.HFL = _thrust;
 });
 
-socket.on('thruster.thrust.HFR', function(_thrust) {
+messenger.on('thruster.thrust.HFR', function(_thrust) {
   status.thrust.HFR = _thrust;
 });
 
-socket.on('thruster.thrust.HRL', function(_thrust) {
+messenger.on('thruster.thrust.HRL', function(_thrust) {
   status.thrust.HRL = _thrust;
 });
 
-socket.on('thruster.thrust.HRR', function(_thrust) {
+messenger.on('thruster.thrust.HRR', function(_thrust) {
   status.thrust.HRR = _thrust;
 });
 
 
 
-socket.on('thruster.thrust.VF', function(_thrust) {
+messenger.on('thruster.thrust.VF', function(_thrust) {
   status.thrust.VF = _thrust;
 });
 
-socket.on('thruster.thrust.VR', function(_thrust) {
+messenger.on('thruster.thrust.VR', function(_thrust) {
   status.thrust.VR = _thrust;
 });
 
 
 
-socket.on('profile.direction', function(_direction) {
+messenger.on('profile.direction', function(_direction) {
   status.thrust.direction = _direction;
 });
 
-socket.on('profile.fineCoarse', function(_fineCoarse) {
+messenger.on('profile.fineCoarse', function(_fineCoarse) {
   status.thrust.fineCoarse = _fineCoarse;
 });
 
 
 
-socket.on('CAM.ch1', function(_channel) {
+messenger.on('CAM.ch1', function(_channel) {
   status.video.ch1 = _channel;
 })
 
-socket.on('CAM.ch2', function(_channel) {
+messenger.on('CAM.ch2', function(_channel) {
   status.video.ch2 = _channel;
 })
 
-socket.on('CAM.ch3', function(_channel) {
+messenger.on('CAM.ch3', function(_channel) {
   status.video.ch3 = _channel;
 })
 
 
 
-socket.on('EM1', function(_EM) {
+messenger.on('EM1', function(_EM) {
   if(_EM.side == "left") {
     status.manipulator.EM1.left = _EM.boolean;
   } else {
@@ -162,7 +162,7 @@ socket.on('EM1', function(_EM) {
   }
 });
 
-socket.on('EM2', function(_EM) {
+messenger.on('EM2', function(_EM) {
   if(_EM.side == "left") {
     status.manipulator.EM2.left = _EM.boolean;
   } else {
@@ -172,22 +172,22 @@ socket.on('EM2', function(_EM) {
 });
 
 
-socket.on('pingerSourceVoltage', function(_sourceVoltage) {
+messenger.on('pingerSourceVoltage', function(_sourceVoltage) {
   status.pinger.sourceVoltage = _sourceVoltage;
 })
 
-socket.on('echoerRoundTime', function(_roundTime) {
+messenger.on('echoerRoundTime', function(_roundTime) {
   status.echoer.roundTime = _roundTime;
 })
 
-socket.on('initiationTime', function(_time) {
+messenger.on('initiationTime', function(_time) {
   status.initiationTime = _time;
 })
 
 
 var pingerErrorArrMax = 1;    //stores how many error messages +1
 var pingerErrorNum = 0;
-socket.on('pingerError', function(_error) {
+messenger.on('pingerError', function(_error) {
   pingerErrorNum++;
   status.pinger.error.shift();
   status.pinger.error[pingerErrorArrMax] = _error + "\t" + runTime() + "   Num: " + pingerErrorNum;
@@ -196,7 +196,7 @@ socket.on('pingerError', function(_error) {
 
 var echoerErrorArrMax = 1;    //stores how many error messages +1
 var echoerErrorNum = 0;
-socket.on('echoerError', function(_error) {
+messenger.on('echoerError', function(_error) {
   echoerErrorNum++;
   status.echoer.error.shift();
   status.echoer.error[echoerErrorArrMax] = _error + "\t" + runTime() + "   Num: " + echoerErrorNum;
@@ -205,7 +205,7 @@ socket.on('echoerError', function(_error) {
 
 var thrustErrorArrMax = 2;    //stores how many error messages +1
 var thrustErrorNum = 0;
-socket.on('thrustError', function(_error) {
+messenger.on('thrustError', function(_error) {
   thrustErrorNum++;
   status.thrust.error.shift();
   status.thrust.error[thrustErrorArrMax] = _error + "\t" + runTime() + "   Num: " + thrustErrorNum;
@@ -214,18 +214,18 @@ socket.on('thrustError', function(_error) {
 
 var miscErrorArrMax = 2;    //stores how many error messages +1
 var miscErrorNum = 0;
-socket.on('miscError', function(_error) {
+messenger.on('miscError', function(_error) {
   miscErrorNum++;
   status.misc.error.shift();
   status.misc.error[miscErrorArrMax] = _error + "\t" + runTime() + "   Num: " + miscErrorNum;
 })
 
-socket.on('pH Value', function (pHValue) {
+messenger.on('pH Value', function (pHValue) {
   status.pHProbe.pH = pHValue;
   status.pHProbe.pHtime = runTime();
 });
 
-socket.on('Temp Value', function (tempValue) {
+messenger.on('Temp Value', function (tempValue) {
   status.pHProbe.temp = tempValue;
   status.pHProbe.temptime = runTime();
 });
@@ -489,11 +489,11 @@ var line = new Line(outputBuffer)
   .store();
 
 //console.log pHnTemp Value
-socket.on('pH Value', function (pHValue) {
+messenger.on('pH Value', function (pHValue) {
   console.log('pH: ' + pHValue);
 });
 
-socket.on('Temp Value', function (tempValue) {
+messenger.on('Temp Value', function (tempValue) {
   console.log('Temp: ' + tempValue);
 });
 */

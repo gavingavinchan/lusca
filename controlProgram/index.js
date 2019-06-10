@@ -9,6 +9,10 @@ const HFL = new thrusterControl({name:"HFL", address: 0x39, invert: true}),
   VR = new thrusterControl({name:"VR", address: 0x3E, invert: true});//,,
   //SILO = new thrusterControl({name:"silo", address: 0x2D, invert: false});
 
+  var _messenger = require("./messenger.js");
+  var messenger = new _messenger.client({});
+  _messenger.startServer();
+/*
 const express = require('express');
 const app = express();
 var http = require('http').Server(app);
@@ -21,13 +25,13 @@ app.get('/', (req, res) => {
 
 io.on('connection', function(socket) {
   // log socket communications
-  /*
+*//*
   socket.use((packet, next) => {
     console.log(new Date() + '\t' + packet[0] + '\t' + packet[1]);
     return next();
   });
 */
-
+/*
   // relay messages from clients
   socket.use((packet, next) => {
     io.emit(packet[0], packet[1]);
@@ -36,7 +40,7 @@ io.on('connection', function(socket) {
 });
 http.listen(80, function() {
   console.log('listening on *:80 ');
-});
+});*/
 
 
 
@@ -65,7 +69,7 @@ var pHTemp = require("./pHTemp.js");
 pHTemp.init(0x35);
 
 //Program initiation time
-io.emit('initiationTime', new Date(Date. UTC(0,0,0,0,0,0)));
+messenger.emit('initiationTime', new Date(Date. UTC(0,0,0,0,0,0)));
 
 
 
