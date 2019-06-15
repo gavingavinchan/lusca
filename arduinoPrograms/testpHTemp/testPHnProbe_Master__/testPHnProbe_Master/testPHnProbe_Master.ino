@@ -1,6 +1,6 @@
 
 #include <Wire.h>
-#define SLAVE_ADDR 0x64
+#define SLAVE_ADDR 0x35
 
 long bitshift(byte byte1, byte byte2) {
   long Nobitshift = (byte1 << 8) | byte2;

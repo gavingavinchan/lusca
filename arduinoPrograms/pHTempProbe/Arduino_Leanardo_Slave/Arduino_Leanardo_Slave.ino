@@ -3,7 +3,9 @@
 
 #define BUFFER_SIZE 16
 #define ledPin 13
-/*
+#define TEMP_PIN A2
+#define PH_PIN A1
+
 //const byte regSize = 210;
 //volatile byte i2cRegs[int(regSize)];
 volatile byte command = 0;
@@ -12,7 +14,7 @@ volatile byte commandADDR = 0;
 byte pHByte[2] = {0, 0};
 byte TempByte[2] = {0, 0};
 
-void Blink(byte times){ 
+void Blink(byte times){
   for (byte i=0; i< times; i++){
     digitalWrite(ledPin,HIGH);
     delay(175);
@@ -26,8 +28,8 @@ void executeCommand() {
     EEPROM.put(0, commandADDR);
     Blink(100);
   } else {
-    int pHA = analogRead(0);  //pin0
-    int TempA = analogRead(2); //pin2
+    int pHA = analogRead(PH_PIN);
+    int TempA = analogRead(TEMP_PIN);
   
     pHByte[0] = (pHA >> 8) & 0xFF;
     pHByte[1] = (pHA) & 0xFF;
@@ -61,6 +63,7 @@ void requestEvent() {
     Wire.write(TempByte[1]);
   } else if(command == 0x69) {
     Wire.write(pHByte[0]);
+    
     Wire.write(pHByte[1]);
     Wire.write(TempByte[0]);
     Wire.write(TempByte[1]);
@@ -68,21 +71,18 @@ void requestEvent() {
     //Wire.write(commandADDR);
   }
 }
-*/
   
 void setup() {
-  /*
   volatile byte SLAVE_ADDR = 0;
   SLAVE_ADDR = EEPROM.read(0);
   if(SLAVE_ADDR > 127 || SLAVE_ADDR < 1) {
-    SLAVE_ADDR = 100;
+    SLAVE_ADDR = 0x31;
   }
 
   Wire.begin(SLAVE_ADDR);
-*/
-Wire.begin(0x64);
-  //Wire.onReceive(receiveEvent);
-  //Wire.onRequest(requestEvent);
+  
+  Wire.onReceive(receiveEvent);
+  Wire.onRequest(requestEvent);
 
   pinMode(ledPin,OUTPUT);
   digitalWrite(ledPin, HIGH);
