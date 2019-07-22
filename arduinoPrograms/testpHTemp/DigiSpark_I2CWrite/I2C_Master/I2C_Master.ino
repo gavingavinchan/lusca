@@ -1,6 +1,6 @@
 #include <Wire.h>
 
-#define SLAVE_ADDR 0x14
+#define SLAVE_ADDR 0x64
 
 int pHValue[2] = {0, 0};
 int TempValue[2] = {0, 0};
@@ -34,8 +34,16 @@ void loop()
     // Those zeros are then overwritten with the lsb
 
     Serial.print("pH value: ");
+    Serial.print(pHValue[0]);
+    Serial.print("\t");
+    Serial.print(pHValue[1]);
+    Serial.print("\t");
     Serial.print(pHValue_NoBit);
     Serial.print("\t TempValue: ");
+    Serial.print(TempValue[0]);
+    Serial.print("\t");
+    Serial.print(TempValue[1]);
+    Serial.print("\t");
     Serial.println(TempValue_NoBit);
 
     delay(100);

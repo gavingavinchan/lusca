@@ -1,12 +1,16 @@
-var fineH = 0.45;
-var coarseH = 0.95;
-var fineV = 0.45;
-var coarseV = 0.95;
+var fineH = 0.08;
+var fineV = 0.15;
+var mediumH = 0.2;
+var mediumV = 0.35;
+var coarseH = 0.4;
+var coarseV = 0.6;
 
 
-var io = require('socket.io-client');
-var socket = io.connect('http://localhost:80');
+//var io = require('socket.io-client');
+//var socket = io.connect('http://localhost:80');
 
+var _messenger = require("./messenger.js");
+var messenger = new _messenger.client({});
 
 var state = {
   drive: 0,
@@ -121,6 +125,7 @@ function truncate(value) {
 
 //*************************
 var mappingH = function(drive, strafe, rotate) {
+//	rotate = rotate *1.3;
   if (state.direction>0)
     return {
       HFL: profileChainH(transformH(deadZone(drive),deadZone(strafe),deadZone(rotate)).HFL),
@@ -148,73 +153,76 @@ var mappingV = function(x,y) {
 
 //*************************
 //is there a way to be this clumbersome
-socket.on('drive', function(value) {
+messenger.on('drive', function(value) {
   state.drive = value;
   let mapped = mappingH(state.drive, state.strafe, state.rotate);
 
-  socket.emit('thrusterTarget.HFL', mapped.HFL);
-  socket.emit('thrusterTarget.HFR', mapped.HFR);
-  socket.emit('thrusterTarget.HRL', mapped.HRL);
-  socket.emit('thrusterTarget.HRR', mapped.HRR);
+  messenger.emit('thrusterTarget.HFL', mapped.HFL);
+  messenger.emit('thrusterTarget.HFR', mapped.HFR);
+  messenger.emit('thrusterTarget.HRL', mapped.HRL);
+  messenger.emit('thrusterTarget.HRR', mapped.HRR);
 })
 
-socket.on('strafe', function(value) {
+messenger.on('strafe', function(value) {
   state.strafe = value;
   let mapped = mappingH(state.drive, state.strafe, state.rotate);
 
-  socket.emit('thrusterTarget.HFL', mapped.HFL);
-  socket.emit('thrusterTarget.HFR', mapped.HFR);
-  socket.emit('thrusterTarget.HRL', mapped.HRL);
-  socket.emit('thrusterTarget.HRR', mapped.HRR);
+  messenger.emit('thrusterTarget.HFL', mapped.HFL);
+  messenger.emit('thrusterTarget.HFR', mapped.HFR);
+  messenger.emit('thrusterTarget.HRL', mapped.HRL);
+  messenger.emit('thrusterTarget.HRR', mapped.HRR);
 })
 
-socket.on('rotate', function(value) {
+messenger.on('rotate', function(value) {
   state.rotate = value;
   let mapped = mappingH(state.drive, state.strafe, state.rotate);
 
-  socket.emit('thrusterTarget.HFL', mapped.HFL);
-  socket.emit('thrusterTarget.HFR', mapped.HFR);
-  socket.emit('thrusterTarget.HRL', mapped.HRL);
-  socket.emit('thrusterTarget.HRR', mapped.HRR);
+  messenger.emit('thrusterTarget.HFL', mapped.HFL);
+  messenger.emit('thrusterTarget.HFR', mapped.HFR);
+  messenger.emit('thrusterTarget.HRL', mapped.HRL);
+  messenger.emit('thrusterTarget.HRR', mapped.HRR);
 })
 
 
 
-socket.on('upDown', function(value) {
+messenger.on('upDown', function(value) {
   state.upDown = value;
   let mapped = mappingV(state.tilt, state.upDown);
 
-  socket.emit('thrusterTarget.VF', mapped.VF);
-  socket.emit('thrusterTarget.VR', mapped.VR);
+  messenger.emit('thrusterTarget.VF', mapped.VF);
+  messenger.emit('thrusterTarget.VR', mapped.VR);
 })
 
-socket.on('tilt', function(value) {
+messenger.on('tilt', function(value) {
   state.tilt = value;
   let mapped = mappingV(state.tilt, state.upDown);
 
-  socket.emit('thrusterTarget.VF', mapped.VF);
-  socket.emit('thrusterTarget.VR', mapped.VR);
+  messenger.emit('thrusterTarget.VF', mapped.VF);
+  messenger.emit('thrusterTarget.VR', mapped.VR);
 })
 
 
 
 //*****
 var limiter = function(fineCoarse) {   //boolean; fine:true, coarse:false
-  if(fineCoarse) {
+  if(fineCoarse == "fine") {
     multiplierLimitH = fineH;
     multiplierLimitV = fineV;
+  } else if(fineCoarse == "medium") {
+    multiplierLimitH = mediumH;
+    multiplierLimitV = mediumV;
   } else {
     multiplierLimitH = coarseH;
     multiplierLimitV = coarseV;
   }
 }
 
-socket.on('profile.fineCoarse', function(_fineCoarse) {
+messenger.on('profile.fineCoarse', function(_fineCoarse) {
   limiter(_fineCoarse);
 })
 
 
 //*****
-socket.on('profile.direction', function(_direction) {
+messenger.on('profile.direction', function(_direction) {
   state.direction = _direction;
 });

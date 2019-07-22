@@ -1,10 +1,12 @@
-var i2c = require('i2c');
-var io = require('socket.io-client');
-var socket = io.connect('http://localhost:80');
-
 const timeInterval = 50;
-const maxAccelerationPerSecond = 0.5;
+const maxAccelerationPerSecond = 1.5;
 const maxStepPerInterval = maxAccelerationPerSecond * (timeInterval/1000);
+
+var i2c = require('i2c');
+
+var _messenger = require("./messenger.js");
+var messenger = new _messenger.client({});
+
 
 
 var i2cThrusterWrite = function(device, _currentSpeed) {
@@ -14,7 +16,7 @@ var i2cThrusterWrite = function(device, _currentSpeed) {
   device.writeBytes(0x00, [hb, lb], function(err) {
     if (err){
       var errorMessage = "  0x" +  device.address.toString(16) + ":  error in thruster: " + speed + "\t" + hb + "\t" + lb;
-      socket.emit('thrustError',errorMessage);
+      messenger.emit('thrustError',errorMessage);
       //console.log(device.address);
       //console.log("error in thruster: " + speed + "\t" + hb + "\t" + lb);
     }
@@ -27,7 +29,8 @@ module.exports = function(setting){
 
   // INIT Thruster
   thruster.setting = Object.assign({ name: 'undefined', address: 0x00, invert: false }, setting);
-  thruster.socket = io.connect('http://localhost:80');
+  //thruster.socket = io.connect('http://localhost:80');
+  thruster.messenger = new _messenger.client({});
   thruster.started = false;
 
   const device = new i2c(thruster.setting.address, {device: '/dev/i2c-1'});
@@ -63,15 +66,15 @@ module.exports = function(setting){
         if(currentSpeed>0) {currentSpeed = 1} else {currentSpeed = -1};
       }
 
-      thruster.socket.emit('thruster.thrust.'+ thruster.setting.name, currentSpeed);
+      thruster.messenger.emit('thruster.thrust.'+ thruster.setting.name, currentSpeed);
       i2cThrusterWrite(device, invert * currentSpeed);
     }, timeInterval);
   }
 
-  thruster.socket.on('thrusterControl.start', function() {
+  thruster.messenger.on('thrusterControl.start', function() {
     console.log("thrusterstarts");
     thruster.start();
-    thruster.socket.emit('thruster', thruster.setting.name + ': starting thruster');
+    thruster.messenger.emit('thruster', thruster.setting.name + ': starting thruster');
   });
 
   thruster.stop = function(){
@@ -79,7 +82,7 @@ module.exports = function(setting){
     clearInterval(loop);
   }
 
-  thruster.socket.on('thrusterControl.stop', function() {
+  thruster.messenger.on('thrusterControl.stop', function() {
     thruster.stop();
   })
 
@@ -89,7 +92,7 @@ module.exports = function(setting){
     targetSpeed = power;
   }
 
-  thruster.socket.on('thrusterTarget.'+ thruster.setting.name, function(power) {
+  thruster.messenger.on('thrusterTarget.'+ thruster.setting.name, function(power) {
     thruster.thrust(power);
   });
 

@@ -1,13 +1,18 @@
 //Initiation
 
 const thrusterControl = require("./thrusterControl.js");
-const HFL = new thrusterControl({name:"HFL", address: 0x31, invert: true}),
+const HFL = new thrusterControl({name:"HFL", address: 0x39, invert: true}),
   HFR = new thrusterControl({name:"HFR", address: 0x33, invert: true}),
-  HRL = new thrusterControl({name:"HRL", address: 0x32, invert: false}),
-  HRR = new thrusterControl({name:"HRR", address: 0x30, invert: false}),
-  VF = new thrusterControl({name:"VF", address: 0x3A, invert: false}),
-  VR = new thrusterControl({name:"VR", address: 0x3B, invert: true});
+  HRL = new thrusterControl({name:"HRL", address: 0x37, invert: false}),
+  HRR = new thrusterControl({name:"HRR", address: 0x38, invert: false}),
+  VF = new thrusterControl({name:"VF", address: 0x3B, invert: true}),
+  VR = new thrusterControl({name:"VR", address: 0x3E, invert: true});//,,
+  //SILO = new thrusterControl({name:"silo", address: 0x2D, invert: false});
 
+  var _messenger = require("./messenger.js");
+  var messenger = new _messenger.client({});
+  _messenger.startServer();
+/*
 const express = require('express');
 const app = express();
 var http = require('http').Server(app);
@@ -20,13 +25,13 @@ app.get('/', (req, res) => {
 
 io.on('connection', function(socket) {
   // log socket communications
-  /*
+*//*
   socket.use((packet, next) => {
     console.log(new Date() + '\t' + packet[0] + '\t' + packet[1]);
     return next();
   });
 */
-
+/*
   // relay messages from clients
   socket.use((packet, next) => {
     io.emit(packet[0], packet[1]);
@@ -35,7 +40,7 @@ io.on('connection', function(socket) {
 });
 http.listen(80, function() {
   console.log('listening on *:80 ');
-});
+});*/
 
 
 
@@ -44,28 +49,27 @@ var thrustProfile = require("./thrustProfile6T.js");
 var servoControl = require("./servoControl.js");
 servoControl.init(0x17);
 
-const EMControl = require("./EMControl.js");
-const EM1 = new EMControl({name: 'EM1', address: 0x14});
-const EM2 = new EMControl({name: 'EM2', address: 0x16});
+//const EMControl = require("./EMControl.js");
+//const EM1 = new EMControl({name: 'EM1', address: 0x14});
+//const EM2 = new EMControl({name: 'EM2', address: 0x16});
 
 
-var ds4Control = require("./ds4Control.js");
+const EMmotorcontrol = require("./EMmotorcontrol.js");
+const EM1 = new EMmotorcontrol({name: 'EM1', address: 0x11});
+const EM2 = new EMmotorcontrol({name: 'EM2', address: 0x12});
+
+var ds4Control = require("./ds4ControlAlt.js");
 
 
 //TODO fix too many listener problem
 var statusDisplay = require("./statusDisplayNEW.js");
 statusDisplay.init();
 
-
-var pinger = require("./pinger.js");
-pinger.init(0x14);
-
-var echoer = require('./echo.js');
-echoer.init(0x14);
-
+var pHTemp = require("./pHTemp.js");
+pHTemp.init(0x35);
 
 //Program initiation time
-io.emit('initiationTime', new Date(Date. UTC(0,0,0,0,0,0)));
+messenger.emit('initiationTime', new Date(Date. UTC(0,0,0,0,0,0)));
 
 
 
@@ -109,4 +113,4 @@ var status = {
 
 exports.getStatus = function() {
   return status;
-}
+};

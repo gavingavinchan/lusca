@@ -27,7 +27,7 @@ module.exports = function(_settings){
         if(err) {socket.emit('miscError', "0x" + EM.setting.address.toString(16) + "EM.right: " + err);}
       });
     } else {
-      socket.emit('EMContorl.js: EM error, so left or right?');
+      socket.emit('miscError', 'EMContorl.js: EM error, so left or right?');
     }
   });
 

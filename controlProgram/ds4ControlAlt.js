@@ -1,6 +1,5 @@
 const silo_pwr = 0.2;
 
-
 var _messenger = require("./messenger.js");
 var messenger = new _messenger.client({});
 
@@ -18,7 +17,6 @@ for (let o of devices) {
     controllerFound = true;
     break;
   }else if(o.vendorId == 1356 && o.productId == 1476) {
-    //console.log(o);
     controller = new GamePad("ps4/dualshock4_analog");
     controllerFound = true;
     break;
@@ -96,30 +94,30 @@ if(controllerFound) {
     gp.leftY = -normalize(value.y);
 
     messenger.emit('drive', gp.leftY);
-    messenger.emit('rotate', gp.leftX);
+    messenger.emit('strafe', gp.leftX);
   })
 
   controller.on("right:move", function(value) {
     let gp = status.gamepad;
 
     gp.rightX = normalize(value.x);
-    gp.rightY = -normalize(value.y);
+    gp.rightY = normalize(value.y);
 
-    messenger.emit('strafe', gp.rightX);
-    messenger.emit('upDown', gp.rightY);
+    messenger.emit('rotate', gp.rightX);
+    messenger.emit('tilt', gp.rightY);
   })
 
 
   controller.on("l2:change", function(value) {
     let gp = status.gamepad;
     gp.l2 = value/255;
-    messenger.emit('tilt', gp.r2 - gp.l2);
+    messenger.emit('upDown', gp.l2 - gp.r2);
   })
 
   controller.on("r2:change", function(value){
     let gp = status.gamepad;
     gp.r2 = value/255;
-    messenger.emit('tilt', gp.r2 - gp.l2);
+    messenger.emit('upDown', gp.l2 - gp.r2);
   })
 
 
@@ -204,18 +202,15 @@ function EMemit(_EM,_strength,_side,_boolean) {
   })
 
   controller.on("triangle:press", function(){
-    //console.log("pressed triangle");
     if(status.manipulator.EM2.right) {
       status.manipulator.EM2.right = false;
       EMemit("EM2",154,"right",status.manipulator.EM2.right);
       setTimeout(function() {
         EMemit("EM2",0,"right",status.manipulator.EM2.right);
       },500);
-      //console.log("EM off");
     } else {
       status.manipulator.EM2.right = true;
       EMemit("EM2",1,"right",status.manipulator.EM2.right);
-      //console.log("EM on");
     }
   })
 
@@ -223,17 +218,14 @@ function EMemit(_EM,_strength,_side,_boolean) {
   controller.on("dpadUp:press", function() {
     let _micros = 1500;
     if(status.video.ch1) {
-      //servoControl.servo(0x02,1500);
       _micros = 1500;
       status.video.ch1 = false;
     } else {
-      //servoControl.servo(0x02,1100);
       _micros = 1100;
       status.video.ch1 = true;
     }
 
     messenger.emit('servo', {command:0x11, micros: _micros});
-    //console.log('_micros: ' + _micros);
     messenger.emit('CAM.ch1', status.video.ch1);
   })
 
@@ -241,34 +233,28 @@ function EMemit(_EM,_strength,_side,_boolean) {
   controller.on("dpadLeft:press", function() {
     let _micros = 1500;
     if(status.video.ch2) {
-      //servoControl.servo(0x02,1500);
       _micros = 1500;
       status.video.ch2 = false;
     } else {
-      //servoControl.servo(0x02,1100);
       _micros = 1100;
       status.video.ch2 = true;
     }
 
     messenger.emit('servo', {command:0x12, micros: _micros});
-    //console.log('_micros: ' + _micros);
     messenger.emit('CAM.ch2', status.video.ch2);
   })
 
   controller.on("dpadDown:press", function() {
     let _micros = 1500;
     if(status.video.ch3) {
-      //servoControl.servo(0x02,1500);
       _micros = 1500;
       status.video.ch3 = false;
     } else {
-      //servoControl.servo(0x02,1100);
       _micros = 1100;
       status.video.ch3 = true;
     }
 
     messenger.emit('servo', {command:0x13, micros: _micros});
-    //console.log('_micros: ' + _micros);
     messenger.emit('CAM.ch3', status.video.ch3);
   })
 
