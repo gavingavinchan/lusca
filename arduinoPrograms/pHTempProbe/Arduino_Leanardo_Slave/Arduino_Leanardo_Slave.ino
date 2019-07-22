@@ -14,6 +14,8 @@ volatile byte commandADDR = 0;
 byte pHByte[2] = {0, 0};
 byte TempByte[2] = {0, 0};
 
+int pHA = 69;
+
 void Blink(byte times){
   for (byte i=0; i< times; i++){
     digitalWrite(ledPin,HIGH);
@@ -28,7 +30,7 @@ void executeCommand() {
     EEPROM.put(0, commandADDR);
     Blink(100);
   } else {
-    int pHA = analogRead(PH_PIN);
+    //pHA = analogRead(PH_PIN);
     int TempA = analogRead(TEMP_PIN);
   
     pHByte[0] = (pHA >> 8) & 0xFF;
@@ -56,8 +58,8 @@ void receiveEvent(byte numBytes) {
 
 void requestEvent() {
   if(command == 0x67) {
-    Wire.write(pHByte[0]);
-    Wire.write(pHByte[1]);
+    Wire.write(pHA);
+    //Wire.write(pHByte[1]);
   } else if(command == 0x68) {
     Wire.write(TempByte[0]);
     Wire.write(TempByte[1]);
