@@ -157,6 +157,7 @@ messenger.on('drive', function(value) {
   state.drive = value;
   let mapped = mappingH(state.drive, state.strafe, state.rotate);
 
+  //console.log("drive: " + value);
   messenger.emit('thrusterTarget.HFL', mapped.HFL);
   messenger.emit('thrusterTarget.HFR', mapped.HFR);
   messenger.emit('thrusterTarget.HRL', mapped.HRL);

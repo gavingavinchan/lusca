@@ -1,6 +1,6 @@
-const PHM = -0.03158;
-const PHB = 26.2;
-const TEMPM = 0;
+const PHM = 1;
+const PHB = 0;
+const TEMPM = 1;
 const TEMPB = 0;
 
 //console.log('starting');
@@ -34,7 +34,7 @@ messenger.on('pHTemp', function(command) {
     //console.log('sending Bytes');
     if (pHValue) {
       messenger.emit('pH Value', pHValue);
-      messenger.emit('Temp Value', tempByte);
+      messenger.emit('Temp Value', tempValue);
     } else {
       messenger.emit('pH Value', -1);
       messenger.emit('Temp Value', -1)
@@ -90,7 +90,7 @@ function pHTemp() {
     // console.log('pH Result: ' + pHResult);
 
     pHByte = unBitShift(pHResult[0], pHResult[1]);
-    console.log('pHByte: ' + pHByte);
+    //console.log('pHByte: ' + pHByte);
 
 
     tempResult[0] = res[2];

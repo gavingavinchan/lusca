@@ -27,11 +27,7 @@ if(!controllerFound) {
   messenger.emit('miscError', 'no controller found');
 }
 
-
-
-messenger.on('connect', ()=>{
-    messenger.emit('thrusterControl.start', {});
-});
+messenger.emit('thrusterControl.start', {});
 
 var status = {
   gamepad: {
