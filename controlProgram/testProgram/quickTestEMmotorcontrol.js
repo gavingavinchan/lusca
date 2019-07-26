@@ -1,5 +1,5 @@
 var i2c = require('i2c');
-var address = 0x10;
+var address = 0x09;
 var wire = new i2c(address, {device: '/dev/i2c-1'}); // point to your i2c address, debug provides REPL interface
 
 
