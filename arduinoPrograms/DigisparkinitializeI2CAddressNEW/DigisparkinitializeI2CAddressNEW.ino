@@ -1,6 +1,6 @@
 #include <EEPROM.h>
 void setup(){
-  pinMode(13, OUTPUT); //LED on Model A  or Pro  
+  pinMode(13, OUTPUT); //LED on Model A  or Pro
   Blink(4);
   delay(1000);
 }
@@ -8,11 +8,7 @@ void setup(){
 void loop(){
 
   //Write value
-<<<<<<< Updated upstream
-  EEPROM.put(0, 0x70); //wirte I2C address
-=======
   EEPROM.put(0, 0x14); //wirte I2C address
->>>>>>> Stashed changes
 
   Blink(1);
 
